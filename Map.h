@@ -8,9 +8,7 @@ class Map
 {
     public:
     Map(int NbrTilesWidth, int NbrTilesHeight);
-
-    void createMap();
-    void drawMap(sf::RenderWindow *window);
+    void create();
     //void setTile(int x, int y);
 
     private:
@@ -21,6 +19,8 @@ class Map
     int m_nbrTilesWidth;
     int m_nbrTilesHeight;
     std::vector<int> table;
+
+    friend void draw(sf::RenderWindow &window, const Map *map);
 };
 
 

@@ -1,33 +1,37 @@
 #include <SFML/Graphics.hpp>
-#include "Map.h"
+#include "Game.h"
+#include "Draw.h"
 
-#define WIDTH_TILE 75
+#define WIDTH_TILE 75 //the size of my squares
 #define HEIGHT_TILE 75
 
-#define NBR_TILES_WIDTH 11
+#define NBR_TILES_WIDTH 11 //the number of squares in my window
 #define NBR_TILES_HEIGHT 10
 
 int main()
 {
-    sf::RenderWindow *window = new sf::RenderWindow(sf::VideoMode(825, 750), "MineDeeper", sf::Style::Close);
-    Map gameMap(NBR_TILES_WIDTH, NBR_TILES_HEIGHT);
-    gameMap.createMap();
+    //Create basic window and create our map
+    sf::RenderWindow window(sf::VideoMode(825, 750), "MineDeeper", sf::Style::Close);
+    Game game(NBR_TILES_WIDTH, NBR_TILES_HEIGHT);
+    game.createMap();
 
-    while (window->isOpen())
+    bool playing = true;
+
+    sf::Event event;
+
+    //Start game loop
+    while (playing)
     {
-        sf::Event event;
-        while (window->pollEvent(event))
+        while (window.pollEvent(event)) //check the events
         {
-            if (event.type == sf::Event::Closed)
-                window->close();
+            if (event.type == sf::Event::Closed) //if the player want to quit
+                playing = false;
         }
 
-        window->clear();
-        gameMap.drawMap(window);
-        window->display();
+        window.clear();
+        draw(window, game);
+        window.display();
     }
-
-    delete window;
 
     return 0;
 }
