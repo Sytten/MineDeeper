@@ -11,6 +11,7 @@ class Game
     Game(int NbrTilesWidth, int NbrTilesHeight);
     ~Game();
     void createMap();
+    Character* returnCharacter() { return character ; }
 
     private:
     Map *map;
