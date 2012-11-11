@@ -2,7 +2,8 @@
 #define MAP_H
 
 #include <SFML/Graphics.hpp>
-#include <vector>
+
+#include "Collisions.h"
 
 class Map
 {
@@ -21,6 +22,7 @@ class Map
     std::vector<int> table;
 
     friend void draw(sf::RenderWindow &window, const Map *map);
+    friend bool collided(sf::RenderWindow const& window, Character *character, Map *map);
 };
 
 

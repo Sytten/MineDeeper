@@ -2,9 +2,9 @@
 
 Character::Character()
 {
-    characterTexture.loadFromFile("véhicule.png");
-    speed = 1.f;
-    x =  375;
+    characterTexture.loadFromFile("vehicule.png"); //load the texture
+    speed = 1.f; //set speed
+    x =  375; //set initial position
     y =  337.5;
 }
 

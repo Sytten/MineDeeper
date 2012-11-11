@@ -1,72 +1,73 @@
 #include "CharacterMover.h"
 #include "Character.h"
 
-CharacterMover::CharacterMover() : _north(false), _south(false), _west(false), _east(false)
+CharacterMover::CharacterMover() : m_north(false), m_south(false), m_west(false), m_east(false) //set them all to false (security)
 {
 }
 
 void CharacterMover::addDirection(Direction direction)
 {
-    switch(direction)
+    switch(direction) //set the given direction to true, so we can move our character
     {
         case NORTH:
-            _north = true;
+            m_north = true;
             break;
 
         case SOUTH:
-            _south = true;
+            m_south = true;
             break;
 
         case EAST:
-            _east = true;
+            m_east = true;
             break;
 
         case WEST:
-            _west = true;
+            m_west = true;
             break;
     }
 }
 
-void CharacterMover::removeDirection(Direction direction)
+void CharacterMover::removeDirection(Direction direction) //set the given direction to false, so we don't move our character
 {
     switch(direction)
     {
         case NORTH:
-            _north = false;
+            m_north = false;
             break;
 
         case SOUTH:
-            _south = false;
+            m_south = false;
             break;
 
         case EAST:
-            _east = false;
+            m_east = false;
             break;
 
         case WEST:
-            _west = false;
+            m_west = false;
             break;
     }
 }
 
 void CharacterMover::move(Character *character)
 {
-    if(_north == true)
+    //check each direction, if it's set to true, move the character in this direction
+    if(m_north == true)
     {
         character->y -= character->speed;
     }
 
-    if(_south == true)
+    if(m_south == true)
     {
         character->y += character->speed;
     }
 
-    if(_east == true)
+    if(m_east == true)
     {
         character->x += character->speed;
     }
 
-    if(_west ==  true)
+    if(m_west ==  true)
     {
         character->x -= character->speed;
     }

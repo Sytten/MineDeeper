@@ -5,28 +5,22 @@
 
 class Character;
 
-enum Direction
-{
-    NONE,
-    SOUTH,
-    NORTH,
-    EAST,
-    WEST
-};
-
 class CharacterMover
 {
     public:
-    CharacterMover();
-    void addDirection(Direction direction);
-    void removeDirection(Direction direction);
-    void move(Character *character);
+        CharacterMover();
+
+        enum Direction{ SOUTH, NORTH, EAST, WEST };
+
+        void addDirection(Direction direction);
+        void removeDirection(Direction direction);
+        void move(Character *character);
 
     private:
-    bool _south;
-    bool _north;
-    bool _east;
-    bool _west;
+        bool m_south;
+        bool m_north;
+        bool m_east;
+        bool m_west;
 
 };
 #endif

@@ -3,8 +3,8 @@
 Map::Map(int NbrTilesWidth, int NbrTilesHeight) : m_nbrTilesWidth(NbrTilesWidth), m_nbrTilesHeight(NbrTilesHeight)
 {
     //Load textures
-    sky.loadFromFile("ciel.png");
-    land.loadFromFile("terre.png");
+    sky.loadFromFile("sky.png");
+    land.loadFromFile("land.png");
 }
 
 void Map::create()

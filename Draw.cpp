@@ -2,8 +2,9 @@
 
 void draw(sf::RenderWindow &window, const Game &game)
 {
-    draw(window, game.map);
-    draw(window, game.character);
+    //each time we draw the map and the character
+    draw(window, game.m_map);
+    draw(window, game.m_character);
 }
 
 void draw(sf::RenderWindow &window, const Map *map)
@@ -36,8 +37,16 @@ void draw(sf::RenderWindow &window, const Map *map)
 
 void draw(sf::RenderWindow &window, const Character *character)
 {
+    //set the texture and the position of our character, then draw it
     sf::Sprite robot;
     robot.setTexture(character->characterTexture);
     robot.setPosition(character->x , character->y);
     window.draw(robot);
+}
+
+void draw(sf::RenderWindow &window, const MainMenu &mainMenu)
+{
+    //draw our main menu image
+    sf::Sprite image(mainMenu.m_mainMenuImage);
+    window.draw(image);
 }

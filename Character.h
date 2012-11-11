@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "CharacterMover.h"
+#include "Collisions.h"
 
 class Character
 {
@@ -16,6 +17,7 @@ class Character
 
     friend void draw(sf::RenderWindow &window, const Character *character);
     friend void CharacterMover::move(Character *character);
+    friend bool Collisions::collided(sf::RenderWindow const& window, Character *character, Map *map);
 };
 
 #endif
