@@ -1,9 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <utility>
+
 #include <SFML/Graphics.hpp>
 
-#include "Map.h"
+#include "TilesMap.h"
 #include "Character.h"
 #include "CharacterMover.h"
 #include "MainMenu.h"
@@ -11,8 +13,7 @@
 class Game
 {
     public:
-        Game(int NbrTilesWidth, int NbrTilesHeight);
-        ~Game();
+        Game();
         void start();
 
     private:
@@ -24,9 +25,11 @@ class Game
         GameState m_gameState;
         sf::RenderWindow m_mainWindow;
 
-        Map *m_map;
-        Character *m_character;
-        CharacterMover *m_characterMover;
+        TilesMap m_tilesMap;
+        Character m_character;
+        CharacterMover m_characterMover;
+
+        sf::Texture m_background;
 
     friend void draw(sf::RenderWindow &window, Game const& game);
 

@@ -1,11 +1,11 @@
 #include "Character.h"
 
-Character::Character()
+Character::Character() : m_velocityX(0), m_velocityY(0), m_maxVelocity(300)
 {
+    characterRect.top = 337.5;
+    characterRect.left = 375;
+    characterRect.width = 75;
+    characterRect.height = 50;
+
     characterTexture.loadFromFile("vehicule.png"); //load the texture
-    speed = 1.f; //set speed
-    x =  375; //set initial position
-    y =  337.5;
 }
-
-

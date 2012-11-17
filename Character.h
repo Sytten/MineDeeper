@@ -5,6 +5,8 @@
 #include "CharacterMover.h"
 #include "Collisions.h"
 
+class TilesMap;
+
 class Character
 {
     public:
@@ -12,12 +14,14 @@ class Character
 
     private:
     sf::Texture characterTexture;
-    float x, y;
-    float speed;
+    sf::Rect<float> characterRect;
 
-    friend void draw(sf::RenderWindow &window, const Character *character);
-    friend void CharacterMover::move(Character *character);
-    friend bool Collisions::collided(sf::RenderWindow const& window, Character *character, Map *map);
+    float m_velocityX;
+    float m_velocityY;
+    float m_maxVelocity;
+
+    friend void draw(sf::RenderWindow &window, const Character &character);
+    friend class CharacterMover;
 };
 
 #endif

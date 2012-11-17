@@ -1,23 +1,9 @@
 #include "Game.h"
 #include "Draw.h"
 
-Game::Game(int NbrTilesWidth, int NbrTilesHeight)
+Game::Game() : m_gameState(Uninitialized), m_tilesMap(), m_character(), m_characterMover()
 {
-    m_gameState = Uninitialized;
-
-    m_map = new Map(NbrTilesWidth, NbrTilesHeight);
-    m_character = new Character();
-    m_characterMover = new CharacterMover();
-}
-
-Game::~Game()
-{
-    delete m_map;
-        m_map = 0;
-    delete m_character;
-        m_character = 0;
-    delete m_characterMover;
-        m_characterMover = 0;
+    m_background.loadFromFile("space.png");
 }
 
 
@@ -28,7 +14,7 @@ void Game::start()
 
     m_mainWindow.create(sf::VideoMode(825, 750), "MineDeeper", sf::Style::Close); //window is not resizable
 
-    m_map->create();
+    m_tilesMap.create();
 
     m_gameState = Game::ShowingMenu;
 
@@ -94,26 +80,29 @@ void Game::gameLoop()
                             {
                                 case sf::Keyboard::Up:
                                 case sf::Keyboard::W:
-                                    m_characterMover->addDirection(CharacterMover::NORTH);
+                                    m_characterMover.addDirection(CharacterMover::NORTH);
                                     break;
 
                                 case sf::Keyboard::Down:
                                 case sf::Keyboard::S:
-                                    m_characterMover->addDirection(CharacterMover::SOUTH);
+                                    m_characterMover.addDirection(CharacterMover::SOUTH);
                                     break;
 
                                 case sf::Keyboard::Left:
                                 case sf::Keyboard::A:
-                                    m_characterMover->addDirection(CharacterMover::WEST);
+                                    m_characterMover.addDirection(CharacterMover::WEST);
                                     break;
 
                                 case sf::Keyboard::Right:
                                 case sf::Keyboard::D:
-                                    m_characterMover->addDirection(CharacterMover::EAST);
+                                    m_characterMover.addDirection(CharacterMover::EAST);
                                     break;
 
                                 case sf::Keyboard::Escape:
                                     m_gameState = ShowingMenu;
+                                    break;
+
+                                default:
                                     break;
                             }
                             break;
@@ -123,33 +112,35 @@ void Game::gameLoop()
                             {
                                 case sf::Keyboard::Up:
                                 case sf::Keyboard::W:
-                                    m_characterMover->removeDirection(CharacterMover::NORTH);
+                                    m_characterMover.removeDirection(CharacterMover::NORTH);
                                     break;
 
                                 case sf::Keyboard::Down:
                                 case sf::Keyboard::S:
-                                    m_characterMover->removeDirection(CharacterMover::SOUTH);
+                                    m_characterMover.removeDirection(CharacterMover::SOUTH);
                                     break;
 
                                 case sf::Keyboard::Left:
                                 case sf::Keyboard::A:
-                                    m_characterMover->removeDirection(CharacterMover::WEST);
+                                    m_characterMover.removeDirection(CharacterMover::WEST);
                                     break;
 
                                 case sf::Keyboard::Right:
                                 case sf::Keyboard::D:
-                                    m_characterMover->removeDirection(CharacterMover::EAST);
+                                    m_characterMover.removeDirection(CharacterMover::EAST);
+                                    break;
+
+                                default:
                                     break;
                             }
+                            break;
+
+                        default:
                             break;
                         }
                     }
 
-                if(clock.getElapsedTime().asMilliseconds() > 6.f) //each 6 millisecond we move the character
-                {
-                    clock.restart();
-                    m_characterMover->move(m_character);
-                }
+                m_characterMover.move(m_character, m_tilesMap, clock.restart());
 
                 m_mainWindow.clear();
                 draw(m_mainWindow, *this);
@@ -157,6 +148,8 @@ void Game::gameLoop()
 
                 break;
                 }
+            default:
+                break;
         }
     }
 }

@@ -1,7 +1,9 @@
 #include "CharacterMover.h"
 #include "Character.h"
+#include "Collisions.h"
+#include "TilesMap.h"
 
-CharacterMover::CharacterMover() : m_north(false), m_south(false), m_west(false), m_east(false) //set them all to false (security)
+CharacterMover::CharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false) //set them all to false (security)
 {
 }
 
@@ -49,26 +51,57 @@ void CharacterMover::removeDirection(Direction direction) //set the given direct
     }
 }
 
-void CharacterMover::move(Character *character)
+void CharacterMover::move(Character &character, TilesMap &tilesMap, sf::Time elapsedTime)
 {
-    //check each direction, if it's set to true, move the character in this direction
-    if(m_north == true)
-    {
-        character->y -= character->speed;
-    }
+    //if the 2 directions are set to false, then set the velocity to 0
+    if(!m_north && !m_south)
+        character.m_velocityY = 0;
 
-    if(m_south == true)
-    {
-        character->y += character->speed;
-    }
+    if(!m_east && !m_west)
+        character.m_velocityX = 0;
 
-    if(m_east == true)
-    {
-        character->x += character->speed;
-    }
 
-    if(m_west ==  true)
-    {
-        character->x -= character->speed;
-    }
+    //if one direction is true, add ou delete 3 to the velocity (x or y)
+    if(m_north)
+        character.m_velocityY -= 3.0f;
+
+    if(m_south)
+        character.m_velocityY += 3.0f;
+
+    if(m_east)
+        character.m_velocityX += 3.0f;
+
+    if(m_west)
+        character.m_velocityX -= 3.0f;
+
+
+    //check if the velocitys are higher than the max
+    if(character.m_velocityX > character.m_maxVelocity)
+        character.m_velocityX = character.m_maxVelocity;
+
+    if(character.m_velocityX < -character.m_maxVelocity)
+        character.m_velocityX = -character.m_maxVelocity;
+
+    if(character.m_velocityY > character.m_maxVelocity)
+        character.m_velocityY = character.m_maxVelocity;
+
+    if(character.m_velocityY < -character.m_maxVelocity)
+        character.m_velocityY = -character.m_maxVelocity;
+
+
+    //check for collisions, if everything is ok: move the character
+    Collisions collisions;
+    bool result = false;
+
+    sf::Rect<float> testRect = character.characterRect;
+
+    testRect.left += elapsedTime.asSeconds()* character.m_velocityX;
+    result = collisions.collidedX(testRect, tilesMap);
+    if(!result)
+        character.characterRect.left += (character.m_velocityX * elapsedTime.asSeconds());
+
+    testRect.top += elapsedTime.asSeconds()* character.m_velocityY;
+    result = collisions.collidedY(testRect, tilesMap);
+    if(!result)
+        character.characterRect.top += (character.m_velocityY * elapsedTime.asSeconds());
 }

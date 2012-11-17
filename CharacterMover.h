@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 class Character;
+class TilesMap;
 
 class CharacterMover
 {
@@ -14,7 +15,7 @@ class CharacterMover
 
         void addDirection(Direction direction);
         void removeDirection(Direction direction);
-        void move(Character *character);
+        void move(Character &character, TilesMap &tilesMap, sf::Time elapsedTime);
 
     private:
         bool m_south;
