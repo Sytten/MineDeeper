@@ -2,7 +2,7 @@
 #define SPRITE_H
 
 #include <SFML/Graphics.hpp>
-#include "CharacterMover.h"
+#include "KeyboardCharacterMover.h"
 #include "Collisions.h"
 
 class TilesMap;
@@ -21,7 +21,7 @@ class Character
     float m_maxVelocity;
 
     friend void draw(sf::RenderWindow &window, const Character &character);
-    friend class CharacterMover;
+    friend class KeyboardCharacterMover;
 };
 
 #endif

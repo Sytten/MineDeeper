@@ -1,13 +1,14 @@
-#include "CharacterMover.h"
+#include "KeyboardCharacterMover.h"
 #include "Character.h"
-#include "Collisions.h"
 #include "TilesMap.h"
+#include "Camera.h"
+#include <iostream>
 
-CharacterMover::CharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false) //set them all to false (security)
+KeyboardCharacterMover::KeyboardCharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false), m_result(false) //set them all to false (security)
 {
 }
 
-void CharacterMover::addDirection(Direction direction)
+void KeyboardCharacterMover::addDirection(Direction direction)
 {
     switch(direction) //set the given direction to true, so we can move our character
     {
@@ -29,7 +30,7 @@ void CharacterMover::addDirection(Direction direction)
     }
 }
 
-void CharacterMover::removeDirection(Direction direction) //set the given direction to false, so we don't move our character
+void KeyboardCharacterMover::removeDirection(Direction direction) //set the given direction to false, so we don't move our character
 {
     switch(direction)
     {
@@ -51,7 +52,7 @@ void CharacterMover::removeDirection(Direction direction) //set the given direct
     }
 }
 
-void CharacterMover::move(Character &character, TilesMap &tilesMap, sf::Time elapsedTime)
+void KeyboardCharacterMover::move(Character &character, TilesMap &tilesMap, Camera &camera, sf::Time elapsedTime)
 {
     //if the 2 directions are set to false, then set the velocity to 0
     if(!m_north && !m_south)
@@ -90,18 +91,26 @@ void CharacterMover::move(Character &character, TilesMap &tilesMap, sf::Time ela
 
 
     //check for collisions, if everything is ok: move the character
-    Collisions collisions;
-    bool result = false;
+    m_testRect = character.characterRect;
 
-    sf::Rect<float> testRect = character.characterRect;
+    m_testRect.left += elapsedTime.asSeconds()* character.m_velocityX; //add movement to x
+    m_result = m_collisions.collidedX(m_testRect, tilesMap); //check if collided
+    if(!m_result) //if not, move the posisiton of the character and the position of the camera
+    {
+        character.characterRect.left = m_testRect.left;
+        camera.moveX(character.characterRect, tilesMap.getWorldSize());
+    }
 
-    testRect.left += elapsedTime.asSeconds()* character.m_velocityX;
-    result = collisions.collidedX(testRect, tilesMap);
-    if(!result)
-        character.characterRect.left += (character.m_velocityX * elapsedTime.asSeconds());
+    //std::cout << "movement X succes" << std::endl;
 
-    testRect.top += elapsedTime.asSeconds()* character.m_velocityY;
-    result = collisions.collidedY(testRect, tilesMap);
-    if(!result)
-        character.characterRect.top += (character.m_velocityY * elapsedTime.asSeconds());
+    m_testRect.top += elapsedTime.asSeconds()* character.m_velocityY; //add movement to y
+    m_result = m_collisions.collidedY(m_testRect, tilesMap); //check if collided
+    if(!m_result) //if not, move the posisiton of the character and the position of the camera
+    {
+        character.characterRect.top = m_testRect.top;
+        //std::cout << "character.top: " << character.characterRect.top << std::endl;
+        camera.moveY(character.characterRect, tilesMap.getWorldSize());
+    }
+
+    //std::cout << "movement y succes" << std::endl;
 }

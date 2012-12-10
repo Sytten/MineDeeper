@@ -7,7 +7,8 @@
 
 #include "TilesMap.h"
 #include "Character.h"
-#include "CharacterMover.h"
+#include "KeyboardCharacterMover.h"
+#include "Camera.h"
 #include "MainMenu.h"
 
 class Game
@@ -19,15 +20,16 @@ class Game
     private:
         void gameLoop();
 
-        enum GameState { Uninitialized, Paused,
-          ShowingMenu, Playing, Exiting };
-
+        enum GameState { Uninitialized, Paused, ShowingMenu, Playing, Exiting };
         GameState m_gameState;
+
         sf::RenderWindow m_mainWindow;
+        sf::Vector2<int> m_windowSize;
 
         TilesMap m_tilesMap;
         Character m_character;
-        CharacterMover m_characterMover;
+        KeyboardCharacterMover m_characterMover;
+        Camera m_camera;
 
         sf::Texture m_background;
 

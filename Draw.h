@@ -7,10 +7,11 @@
 #include "Game.h"
 #include "Character.h"
 #include "MainMenu.h"
+#include "Camera.h"
 
 void draw(sf::RenderWindow &window, const MainMenu &mainMenu);
 void draw(sf::RenderWindow &window, const Character &character);
-void draw(sf::RenderWindow &window, const TilesMap &tilesMap);
+void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &camera);
 void draw(sf::RenderWindow &window, const Game &game);
 
 #endif

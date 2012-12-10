@@ -1,6 +1,7 @@
 #include "TilesMap.h"
+#include <iostream>
 
-TilesMap::TilesMap() : m_tileWidth(75), m_tileHeight(75), m_worldWidth(825), m_worldHeight(750), m_nbrTilesX(3), m_nbrTilesY(1)
+TilesMap::TilesMap() : m_tileSize(75, 75), m_tileSetSize(3, 1)
 {
 }
 
@@ -17,45 +18,67 @@ void TilesMap::loadTileSet()
 
     int nbrTile(0);
 
-    for(int i(0); i < m_nbrTilesY; i++)
+    for(int i(0); i < m_tileSetSize.y; i++)
     {
-        for(int j(0); j < m_nbrTilesX; j++)
+        for(int j(0); j < m_tileSetSize.x; j++)
         {
-            TileProp tileProp;
+            TileProp tile;
 
-            tileProp.tileRect.width = m_tileWidth;
-            tileProp.tileRect.height = m_tileHeight;
-            tileProp.tileRect.left = j*m_tileWidth;
-            tileProp.tileRect.top = i*m_tileHeight;
+            tile.posInTileSet.width = m_tileSize.y;
+            tile.posInTileSet.height = m_tileSize.x;
+            tile.posInTileSet.left = j*m_tileSize.x;
+            tile.posInTileSet.top = i*m_tileSize.y;
 
             if(nbrTile ==  0)
-                tileProp.full = false;
+                tile.walkable = false;
 
             else
-                tileProp.full = true;
+                tile.walkable = true;
 
-            m_tilesProps[nbrTile] = tileProp;
+            m_tilesProps[nbrTile] = tile;
 
             nbrTile++;
         }
     }
-
 }
 
 
 void TilesMap::loadLevel()
 {
-    table.reserve(110); //I need 110 squares
+    int y, x;
 
-    for(int i(0); i < 88; i++) //In my map I want sky(0) and background land(2)
-        table.push_back(0);
+    m_world.resize(100);
 
-    for(int i(0); i < 22; i++)
-        table.push_back(2);
+    for(int i = 0; i < (int)m_world.size(); i++)
+    {
+        m_world.at(i).resize(50, 0);
+    }
+
+    for(x = 0; x < (int)m_world.size(); x++)
+    {
+        for(y = 0; y < (int)m_world[x].size(); y++)
+        {
+            if(y < 9)
+                m_world[x][y] = 0;
+
+            else
+                m_world[x][y] = 2;
+        }
+    }
+
+    m_worldSize.x = m_world.size() * m_tileSize.x;
+    for(x = 0; x < (int)m_world.size(); y++)
+    {
+        for(y = 0; y < (int)m_world[x].size() ; x++)
+        {
+           m_worldSize.y += m_tileSize.y;
+        }
+    }
 }
 
 
 TilesMap::TileProp TilesMap::getTileProp(int tile) const
 {
+
     return m_tilesProps.at(tile); //return the props of the specified tile
 }

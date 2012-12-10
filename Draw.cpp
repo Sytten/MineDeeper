@@ -1,4 +1,5 @@
 #include "Draw.h"
+#include <iostream>
 
 void draw(sf::RenderWindow &window, const Game &game)
 {
@@ -8,45 +9,38 @@ void draw(sf::RenderWindow &window, const Game &game)
     background.setScale(0.5, 0.5);
     window.draw(background);
 
-    draw(window, game.m_tilesMap);
+    draw(window, game.m_tilesMap, game.m_camera);
     draw(window, game.m_character);
 }
 
-void draw(sf::RenderWindow &window, const TilesMap &tilesMap)
+void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &camera)
 {
+    sf::Vector2<int> camOffSet = camera.getOffset(tilesMap.m_tileSize);
+    sf::Rect<int> bounds = camera.getBounds(tilesMap.m_tileSize);
+
     sf::Sprite tile;
     tile.setTexture(tilesMap.m_tileSet);
 
-    for(int x(0); x < tilesMap.m_worldWidth/tilesMap.m_tileWidth; x++) //check each number of the vector
+    for(int y = 0, tileY = bounds.top; y < bounds.height; y++, tileY++)
     {
-        for(int y(0); y < tilesMap.m_worldHeight/tilesMap.m_tileHeight; y++)
+        for(int x = 0, tileX = bounds.left; x < bounds.width; x++, tileX++)
         {
-            if(tilesMap.table[y*(tilesMap.m_worldWidth/tilesMap.m_tileWidth)+x] == 1) //if 1 draw land
-            {
-                tile.setTextureRect(tilesMap.getTileProp(1).tileRect);
-                tile.setPosition(x*75, y*75);
+                tile.setTextureRect(tilesMap.getTileProp(tilesMap.m_world[tileX][tileY]).posInTileSet);
+                tile.setPosition((x * tilesMap.m_tileSize.x) - camOffSet.x, (y * tilesMap.m_tileSize.y) - camOffSet.y);
 
                 window.draw(tile);
-            }
-
-            if(tilesMap.table[y*(tilesMap.m_worldWidth/tilesMap.m_tileWidth)+x] == 2) //if 2 draw background land
-            {
-                tile.setTextureRect(tilesMap.getTileProp(2).tileRect);
-                tile.setPosition(x*75, y*75);
-
-                window.draw(tile);
-            }
         }
     }
+
 }
 
 void draw(sf::RenderWindow &window, const Character &character)
 {
     //set the texture and the position of our character, then draw it
-    sf::Sprite robot;
-    robot.setTexture(character.characterTexture);
-    robot.setPosition(character.characterRect.left , character.characterRect.top);
-    window.draw(robot);
+    sf::Sprite spriteCharacter;
+    spriteCharacter.setTexture(character.characterTexture);
+    spriteCharacter.setPosition(character.characterRect.left , character.characterRect.top);
+    window.draw(spriteCharacter);
 }
 
 void draw(sf::RenderWindow &window, const MainMenu &mainMenu)

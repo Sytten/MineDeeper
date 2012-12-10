@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "Draw.h"
 
-Game::Game() : m_gameState(Uninitialized), m_tilesMap(), m_character(), m_characterMover()
+Game::Game() : m_gameState(Uninitialized), m_windowSize(825, 750), m_tilesMap(), m_character(), m_characterMover(), m_camera(m_windowSize.x, m_windowSize.y)
 {
     m_background.loadFromFile("space.png");
 }
@@ -12,7 +12,7 @@ void Game::start()
     if(m_gameState != Uninitialized) //we can only start if we are not in-game already
         return;
 
-    m_mainWindow.create(sf::VideoMode(825, 750), "MineDeeper", sf::Style::Close); //window is not resizable
+    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper", sf::Style::Close); //window is not resizable
 
     m_tilesMap.create();
 
@@ -80,22 +80,22 @@ void Game::gameLoop()
                             {
                                 case sf::Keyboard::Up:
                                 case sf::Keyboard::W:
-                                    m_characterMover.addDirection(CharacterMover::NORTH);
+                                    m_characterMover.addDirection(KeyboardCharacterMover::NORTH);
                                     break;
 
                                 case sf::Keyboard::Down:
                                 case sf::Keyboard::S:
-                                    m_characterMover.addDirection(CharacterMover::SOUTH);
+                                    m_characterMover.addDirection(KeyboardCharacterMover::SOUTH);
                                     break;
 
                                 case sf::Keyboard::Left:
                                 case sf::Keyboard::A:
-                                    m_characterMover.addDirection(CharacterMover::WEST);
+                                    m_characterMover.addDirection(KeyboardCharacterMover::WEST);
                                     break;
 
                                 case sf::Keyboard::Right:
                                 case sf::Keyboard::D:
-                                    m_characterMover.addDirection(CharacterMover::EAST);
+                                    m_characterMover.addDirection(KeyboardCharacterMover::EAST);
                                     break;
 
                                 case sf::Keyboard::Escape:
@@ -112,22 +112,22 @@ void Game::gameLoop()
                             {
                                 case sf::Keyboard::Up:
                                 case sf::Keyboard::W:
-                                    m_characterMover.removeDirection(CharacterMover::NORTH);
+                                    m_characterMover.removeDirection(KeyboardCharacterMover::NORTH);
                                     break;
 
                                 case sf::Keyboard::Down:
                                 case sf::Keyboard::S:
-                                    m_characterMover.removeDirection(CharacterMover::SOUTH);
+                                    m_characterMover.removeDirection(KeyboardCharacterMover::SOUTH);
                                     break;
 
                                 case sf::Keyboard::Left:
                                 case sf::Keyboard::A:
-                                    m_characterMover.removeDirection(CharacterMover::WEST);
+                                    m_characterMover.removeDirection(KeyboardCharacterMover::WEST);
                                     break;
 
                                 case sf::Keyboard::Right:
                                 case sf::Keyboard::D:
-                                    m_characterMover.removeDirection(CharacterMover::EAST);
+                                    m_characterMover.removeDirection(KeyboardCharacterMover::EAST);
                                     break;
 
                                 default:
@@ -140,7 +140,7 @@ void Game::gameLoop()
                         }
                     }
 
-                m_characterMover.move(m_character, m_tilesMap, clock.restart());
+                m_characterMover.move(m_character, m_tilesMap, m_camera, clock.restart());
 
                 m_mainWindow.clear();
                 draw(m_mainWindow, *this);

@@ -4,7 +4,7 @@
 
 bool Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap &tilesMap)
 {
-    if(characterRect.left < 0 || (characterRect.left + characterRect.width) > tilesMap.m_worldWidth)
+    if(characterRect.left < 0 || (characterRect.left + characterRect.width) > tilesMap.m_worldSize.x)
         return true;
 
     if(collidedDecor(characterRect, tilesMap))
@@ -16,7 +16,7 @@ bool Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap &tiles
 
 bool Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap &tilesMap)
 {
-    if((characterRect.top) < 0 || (characterRect.top + characterRect.height) > tilesMap.m_worldHeight)
+    if((characterRect.top) < 0 || (characterRect.top + characterRect.height) > tilesMap.m_worldSize.y)
         return true;
 
     if(collidedDecor(characterRect, tilesMap))
@@ -28,7 +28,7 @@ bool Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap &tiles
 
 bool Collisions::collidedDecor(sf::Rect<float> const& characterRect, TilesMap &tilesMap)
 {
-    sf::Rect<float> rectTest;
+    /*sf::Rect<float> rectTest;
         rectTest.height = tilesMap.m_tileHeight;
         rectTest.width = tilesMap.m_tileWidth;
 
@@ -46,7 +46,7 @@ bool Collisions::collidedDecor(sf::Rect<float> const& characterRect, TilesMap &t
                     return true;
             }
         }
-    }
+    }*/
 
     return false;
 }
