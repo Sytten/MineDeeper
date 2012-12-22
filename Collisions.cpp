@@ -2,7 +2,7 @@
 #include "Character.h"
 #include "TilesMap.h"
 
-bool Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap &tilesMap)
+bool Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
 {
     if(characterRect.left < 0 || (characterRect.left + characterRect.width) > tilesMap.m_worldSize.x)
         return true;
@@ -14,7 +14,7 @@ bool Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap &tiles
 }
 
 
-bool Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap &tilesMap)
+bool Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
 {
     if((characterRect.top) < 0 || (characterRect.top + characterRect.height) > tilesMap.m_worldSize.y)
         return true;
@@ -26,27 +26,22 @@ bool Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap &tiles
 }
 
 
-bool Collisions::collidedDecor(sf::Rect<float> const& characterRect, TilesMap &tilesMap)
+bool Collisions::collidedDecor(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
 {
-    /*sf::Rect<float> rectTest;
-        rectTest.height = tilesMap.m_tileHeight;
-        rectTest.width = tilesMap.m_tileWidth;
+    int xmin = characterRect.left / tilesMap.m_tileSize.x;
+    int xmax = (characterRect.left + characterRect.width - 1) / tilesMap.m_tileSize.x;
+    int ymin = characterRect.top / tilesMap.m_tileSize.y;
+    int ymax = (characterRect.top + characterRect.height - 1) / tilesMap.m_tileSize.y;
 
-    for(int x(0); x < tilesMap.m_worldWidth/tilesMap.m_tileWidth; x++)
+    for(int x = xmin; x <= xmax; x++)
     {
-        for(int y(0); y < tilesMap.m_worldHeight/tilesMap.m_tileHeight; y++)
+        for(int y = ymin; y <= ymax; y++)
         {
-            int tileIndex = tilesMap.table[y*(tilesMap.m_worldWidth/tilesMap.m_tileWidth)+x];
-            if(tilesMap.getTileProp(tileIndex).full)
-            {
-                rectTest.top = y*tilesMap.m_tileHeight;
-                rectTest.left =  x*tilesMap.m_tileWidth;
-
-                if(characterRect.intersects(rectTest))
-                    return true;
-            }
+            bool result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable;
+            if(!result)
+                return true;
         }
-    }*/
+    }
 
     return false;
 }

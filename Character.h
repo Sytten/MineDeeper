@@ -15,12 +15,13 @@ class Character
     private:
     sf::Texture characterTexture;
     sf::Rect<float> characterRect;
+    sf::Vector2<float> posInScreen;
 
     float m_velocityX;
     float m_velocityY;
     float m_maxVelocity;
 
-    friend void draw(sf::RenderWindow &window, const Character &character);
+    friend void draw(sf::RenderWindow &window, const Character &character, sf::Vector2f cameraPos);
     friend class KeyboardCharacterMover;
 };
 

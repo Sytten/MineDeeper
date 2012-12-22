@@ -15,8 +15,8 @@ class TilesMap
         void loadTileSet();
         void loadLevel();
 
-        sf::Vector2<int> m_tileSize;
-        sf::Vector2<int> m_worldSize;
+        sf::Vector2i m_tileSize;
+        sf::Vector2i m_worldSize;
         std::vector<std::vector<int> > m_world; //our world
 
         struct TileProp
@@ -35,7 +35,8 @@ class TilesMap
         TilesMap();
         void create();
         TileProp getTileProp(int tile) const;
-        sf::Vector2<int> getWorldSize() { return m_worldSize; }
+        sf::Vector2i getWorldSize() const { return m_worldSize; }
+        sf::Vector2i getTileSize() const { return m_tileSize; }
 
 
         friend void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &camera);

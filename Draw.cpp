@@ -1,5 +1,6 @@
 #include "Draw.h"
 #include <iostream>
+#include <cmath>
 
 void draw(sf::RenderWindow &window, const Game &game)
 {
@@ -10,7 +11,7 @@ void draw(sf::RenderWindow &window, const Game &game)
     window.draw(background);
 
     draw(window, game.m_tilesMap, game.m_camera);
-    draw(window, game.m_character);
+    draw(window, game.m_character, game.m_camera.getPosition());
 }
 
 void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &camera)
@@ -34,12 +35,14 @@ void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &came
 
 }
 
-void draw(sf::RenderWindow &window, const Character &character)
+void draw(sf::RenderWindow &window, const Character &character, sf::Vector2f cameraPos)
 {
-    //set the texture and the position of our character, then draw it
+    //set the texture of the character
     sf::Sprite spriteCharacter;
     spriteCharacter.setTexture(character.characterTexture);
-    spriteCharacter.setPosition(character.characterRect.left , character.characterRect.top);
+
+    //set the position on the screen
+    spriteCharacter.setPosition(character.characterRect.left - cameraPos.x, character.characterRect.top - cameraPos.y);
     window.draw(spriteCharacter);
 }
 

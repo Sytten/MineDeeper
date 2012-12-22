@@ -1,5 +1,4 @@
 #include "TilesMap.h"
-#include <iostream>
 
 TilesMap::TilesMap() : m_tileSize(75, 75), m_tileSetSize(3, 1)
 {
@@ -30,10 +29,10 @@ void TilesMap::loadTileSet()
             tile.posInTileSet.top = i*m_tileSize.y;
 
             if(nbrTile ==  0)
-                tile.walkable = false;
+                tile.walkable = true;
 
             else
-                tile.walkable = true;
+                tile.walkable = false;
 
             m_tilesProps[nbrTile] = tile;
 
@@ -47,11 +46,11 @@ void TilesMap::loadLevel()
 {
     int y, x;
 
-    m_world.resize(100);
+    m_world.resize(20);
 
     for(int i = 0; i < (int)m_world.size(); i++)
     {
-        m_world.at(i).resize(50, 0);
+        m_world.at(i).resize(15, 0);
     }
 
     for(x = 0; x < (int)m_world.size(); x++)
@@ -67,12 +66,9 @@ void TilesMap::loadLevel()
     }
 
     m_worldSize.x = m_world.size() * m_tileSize.x;
-    for(x = 0; x < (int)m_world.size(); y++)
+    for(int i = 0; i < (int)m_world[0].size() ; i++)
     {
-        for(y = 0; y < (int)m_world[x].size() ; x++)
-        {
            m_worldSize.y += m_tileSize.y;
-        }
     }
 }
 

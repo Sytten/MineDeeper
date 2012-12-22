@@ -101,16 +101,11 @@ void KeyboardCharacterMover::move(Character &character, TilesMap &tilesMap, Came
         camera.moveX(character.characterRect, tilesMap.getWorldSize());
     }
 
-    //std::cout << "movement X succes" << std::endl;
-
     m_testRect.top += elapsedTime.asSeconds()* character.m_velocityY; //add movement to y
     m_result = m_collisions.collidedY(m_testRect, tilesMap); //check if collided
     if(!m_result) //if not, move the posisiton of the character and the position of the camera
     {
         character.characterRect.top = m_testRect.top;
-        //std::cout << "character.top: " << character.characterRect.top << std::endl;
         camera.moveY(character.characterRect, tilesMap.getWorldSize());
     }
-
-    //std::cout << "movement y succes" << std::endl;
 }
