@@ -1,8 +1,12 @@
 #include "MainMenu.h"
+#include "ImageException.h"
 
 MainMenu::MainMenu()
 {
-    m_mainMenuImage.loadFromFile("mainmenu.png"); //load our Main menu image
+    if(!m_mainMenuImage.loadFromFile("mainmenu.png")) //load our Main menu image
+        throw ImageException("mainemenu.png");
+
+    m_mainMenuSprite.setTexture(m_mainMenuImage); //set the sprite
 
     //create the rects for the main menu buttons
     MenuButton playButton;

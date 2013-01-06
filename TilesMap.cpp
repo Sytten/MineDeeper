@@ -1,6 +1,7 @@
 #include "TilesMap.h"
+#include "ImageException.h"
 
-TilesMap::TilesMap() : m_tileSize(75, 75), m_tileSetSize(3, 1)
+TilesMap::TilesMap(int tileSizeX, int tileSizeY) : m_tileSize(tileSizeX, tileSizeY), m_tileSetSize(3, 1) //Have to modify that to check in a config file
 {
 }
 
@@ -13,7 +14,10 @@ void TilesMap::create()
 
 void TilesMap::loadTileSet()
 {
-    m_tileSet.loadFromFile("tilesetmap.png");
+    if(!m_tileSet.loadFromFile("tilesetmap.png"))
+        throw ImageException("tilesetmap.png");
+
+    m_tile.setTexture(m_tileSet);
 
     int nbrTile(0);
 
@@ -77,4 +81,10 @@ TilesMap::TileProp TilesMap::getTileProp(int tile) const
 {
 
     return m_tilesProps.at(tile); //return the props of the specified tile
+}
+
+
+void TilesMap::setTile(int x, int y, int blockID)
+{
+    m_world[x][y] = blockID;
 }

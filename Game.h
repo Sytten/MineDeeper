@@ -10,6 +10,7 @@
 #include "KeyboardCharacterMover.h"
 #include "Camera.h"
 #include "MainMenu.h"
+#include "Background.h"
 
 class Game
 {
@@ -31,9 +32,9 @@ class Game
         KeyboardCharacterMover m_characterMover;
         Camera m_camera;
 
-        sf::Texture m_background;
+        Background m_background;
 
-    friend void draw(sf::RenderWindow &window, Game const& game);
+    friend void draw(sf::RenderWindow &window, Game &game);
 
 };
 #endif

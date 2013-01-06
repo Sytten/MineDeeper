@@ -2,53 +2,46 @@
 #include <iostream>
 #include <cmath>
 
-void draw(sf::RenderWindow &window, const Game &game)
+void draw(sf::RenderWindow &window, Game &game)
 {
     //each time we draw the background, the tiles map and the character
-    sf::Sprite background;
-    background.setTexture(game.m_background);
-    background.setScale(0.5, 0.5);
-    window.draw(background);
-
+    draw(window, game.m_background);
     draw(window, game.m_tilesMap, game.m_camera);
     draw(window, game.m_character, game.m_camera.getPosition());
 }
 
-void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &camera)
+void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera)
 {
-    sf::Vector2<int> camOffSet = camera.getOffset(tilesMap.m_tileSize);
-    sf::Rect<int> bounds = camera.getBounds(tilesMap.m_tileSize);
+    tilesMap.m_camOffSet = camera.getOffset(tilesMap.m_tileSize);
+    tilesMap.m_bounds = camera.getBounds(tilesMap.m_tileSize);
 
-    sf::Sprite tile;
-    tile.setTexture(tilesMap.m_tileSet);
-
-    for(int y = 0, tileY = bounds.top; y < bounds.height; y++, tileY++)
+    for(int y = 0, tileY = tilesMap.m_bounds.top; y < tilesMap.m_bounds.height; y++, tileY++)
     {
-        for(int x = 0, tileX = bounds.left; x < bounds.width; x++, tileX++)
+        for(int x = 0, tileX = tilesMap.m_bounds.left; x < tilesMap.m_bounds.width; x++, tileX++)
         {
-                tile.setTextureRect(tilesMap.getTileProp(tilesMap.m_world[tileX][tileY]).posInTileSet);
-                tile.setPosition((x * tilesMap.m_tileSize.x) - camOffSet.x, (y * tilesMap.m_tileSize.y) - camOffSet.y);
+                tilesMap.m_tile.setTextureRect(tilesMap.getTileProp(tilesMap.m_world[tileX][tileY]).posInTileSet);
+                tilesMap.m_tile.setPosition((x * tilesMap.m_tileSize.x) - tilesMap.m_camOffSet.x, (y * tilesMap.m_tileSize.y) - tilesMap.m_camOffSet.y);
 
-                window.draw(tile);
+                window.draw(tilesMap.m_tile);
         }
     }
 
 }
 
-void draw(sf::RenderWindow &window, const Character &character, sf::Vector2f cameraPos)
+void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos)
 {
-    //set the texture of the character
-    sf::Sprite spriteCharacter;
-    spriteCharacter.setTexture(character.characterTexture);
-
     //set the position on the screen
-    spriteCharacter.setPosition(character.characterRect.left - cameraPos.x, character.characterRect.top - cameraPos.y);
-    window.draw(spriteCharacter);
+    character.setCharacterPosition(character.getCharacterRect().left - cameraPos.x, character.getCharacterRect().top - cameraPos.y);
+    window.draw(character.getCharacterSprite());
 }
 
 void draw(sf::RenderWindow &window, const MainMenu &mainMenu)
 {
     //draw our main menu image
-    sf::Sprite image(mainMenu.m_mainMenuImage);
-    window.draw(image);
+    window.draw(mainMenu.getMainMenuSprite());
+}
+
+void draw(sf::RenderWindow &window, const Background &background)
+{
+    window.draw(background.getBackgroundSprite());
 }

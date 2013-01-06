@@ -13,6 +13,8 @@ class MainMenu
         enum MenuChoice { NOTHING, EXIT, PLAY};
 
         MenuChoice HandleClick(int x, int y);
+        sf::Texture const& getMainMenuImage() const { return m_mainMenuImage; }
+        sf::Sprite const& getMainMenuSprite() const { return m_mainMenuSprite; }
 
 
     private:
@@ -26,8 +28,7 @@ class MainMenu
         std::list<MenuButton> m_menuButtons;
 
         sf::Texture m_mainMenuImage;
-
-        friend void draw(sf::RenderWindow &window, const MainMenu &mainMenu);
+        sf::Sprite m_mainMenuSprite;
 };
 
 #endif

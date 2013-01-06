@@ -2,46 +2,104 @@
 #include "Character.h"
 #include "TilesMap.h"
 
-bool Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
+Collisions::CollisionType Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos)
 {
     if(characterRect.left < 0 || (characterRect.left + characterRect.width) > tilesMap.m_worldSize.x)
-        return true;
+        return Collisions::Collision;
 
-    if(collidedDecor(characterRect, tilesMap))
-        return true;
+    sf::Rect<float> tileRect;
+    sf::Rect<float> intersection;
+    CollisionType impact(NoCollision);
 
-    return false;
-}
+    m_xmin = characterRect.left / tilesMap.m_tileSize.x;
+    m_xmax = (characterRect.left + characterRect.width) / tilesMap.m_tileSize.x;
+    m_ymin = characterRect.top / tilesMap.m_tileSize.y;
+    m_ymax = (characterRect.top + characterRect.height) / tilesMap.m_tileSize.y;
 
+    if((int)(characterRect.top + characterRect.height) % tilesMap.m_tileSize.y == 0)
+        m_ymax--;
 
-bool Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
-{
-    if((characterRect.top) < 0 || (characterRect.top + characterRect.height) > tilesMap.m_worldSize.y)
-        return true;
+    if((int)(characterRect.left + characterRect.width) % tilesMap.m_tileSize.x == 0)
+        m_xmax--;
 
-    if(collidedDecor(characterRect, tilesMap))
-        return true;
-
-    return false;
-}
-
-
-bool Collisions::collidedDecor(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
-{
-    int xmin = characterRect.left / tilesMap.m_tileSize.x;
-    int xmax = (characterRect.left + characterRect.width - 1) / tilesMap.m_tileSize.x;
-    int ymin = characterRect.top / tilesMap.m_tileSize.y;
-    int ymax = (characterRect.top + characterRect.height - 1) / tilesMap.m_tileSize.y;
-
-    for(int x = xmin; x <= xmax; x++)
+    for(int x = m_xmin; x <= m_xmax; x++)
     {
-        for(int y = ymin; y <= ymax; y++)
+        for(int y = m_ymin; y <= m_ymax; y++)
         {
-            bool result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable;
-            if(!result)
-                return true;
+            bool result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable; //check if we can go on the tile
+            int test = tilesMap.m_world[x][y];
+            if(!result) //if not, then check if we can dig it
+            {
+                impact = Collisions::Collision;
+                tileRect.left = x*tilesMap.m_tileSize.x;
+                tileRect.top = y*tilesMap.m_tileSize.y;
+                tileRect.width = tilesMap.m_tileSize.x;
+                tileRect.height = tilesMap.m_tileSize.y;
+
+                characterRect.intersects(tileRect, intersection);
+
+                if(intersection.height >= (characterRect.height/2))
+                {
+                    blockPos.x = tileRect.left;
+                    blockPos.y = tileRect.top;
+
+                    return Collisions::Diggable;
+                }
+
+            }
         }
     }
 
-    return false;
+    return impact;
+}
+
+
+Collisions::CollisionType Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos)
+{
+    if((characterRect.top) < 0 || (characterRect.top + characterRect.height) > tilesMap.m_worldSize.y)
+        return Collisions::Collision;
+
+    sf::Rect<float> tileRect;
+    sf::Rect<float> intersection;
+    CollisionType impact(NoCollision);
+
+    m_xmin = characterRect.left / tilesMap.m_tileSize.x;
+    m_xmax = (characterRect.left + characterRect.width) / tilesMap.m_tileSize.x;
+    m_ymin = characterRect.top / tilesMap.m_tileSize.y;
+    m_ymax = (characterRect.top + characterRect.height) / tilesMap.m_tileSize.y;
+
+    if((int)(characterRect.top + characterRect.height) % tilesMap.m_tileSize.y == 0)
+        m_ymax--;
+
+    if((int)(characterRect.left + characterRect.width) % tilesMap.m_tileSize.x == 0)
+        m_xmax--;
+
+    for(int y = m_ymin; y <= m_ymax; y++)
+    {
+        for(int x = m_xmin; x <= m_xmax; x++)
+        {
+            bool result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable; //check if we can go on the tile
+            if(!result) //if not, then check if we can dig it
+            {
+                impact = Collisions::Collision;
+                tileRect.left = x*tilesMap.m_tileSize.x;
+                tileRect.top = y*tilesMap.m_tileSize.y;
+                tileRect.width = tilesMap.m_tileSize.x;
+                tileRect.height = tilesMap.m_tileSize.y;
+
+                characterRect.intersects(tileRect, intersection);
+
+                if(intersection.width >= (characterRect.width/2))
+                {
+                    blockPos.x = tileRect.left;
+                    blockPos.y = tileRect.top;
+
+                    return Collisions::Diggable;
+                }
+
+            }
+        }
+    }
+
+    return impact;
 }

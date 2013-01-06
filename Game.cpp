@@ -1,9 +1,9 @@
 #include "Game.h"
 #include "Draw.h"
+#include <iostream>
 
-Game::Game() : m_gameState(Uninitialized), m_windowSize(825, 750), m_tilesMap(), m_character(), m_characterMover(), m_camera(m_windowSize.x, m_windowSize.y)
+Game::Game() : m_gameState(Uninitialized), m_windowSize(825, 750), m_tilesMap(75, 75), m_character(), m_characterMover(), m_camera(m_windowSize.x, m_windowSize.y), m_background("space.png", sf::Vector2f(0.5, 0.5))
 {
-    m_background.loadFromFile("space.png");
 }
 
 
@@ -140,7 +140,7 @@ void Game::gameLoop()
                         }
                     }
 
-                m_characterMover.move(m_character, m_tilesMap, m_camera, clock.restart());
+                m_characterMover.move(m_mainWindow, m_character, m_tilesMap, m_camera, m_background, clock.restart());
 
                 m_mainWindow.clear();
                 draw(m_mainWindow, *this);

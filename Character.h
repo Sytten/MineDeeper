@@ -10,19 +10,25 @@ class TilesMap;
 class Character
 {
     public:
-    Character();
+        Character();
+
+        void setCharacterTexture(std::string textureName);
+        void setCharacterPosition(float x, float y);
+
+        sf::Sprite const& getCharacterSprite() const { return m_characterSprite; }
+        sf::Rect<float> const& getCharacterRect() const { return characterRect; }
 
     private:
-    sf::Texture characterTexture;
-    sf::Rect<float> characterRect;
-    sf::Vector2<float> posInScreen;
+        sf::Texture m_characterTexture;
+        sf::Sprite m_characterSprite;
+        sf::Rect<float> characterRect;
 
-    float m_velocityX;
-    float m_velocityY;
-    float m_maxVelocity;
+        float m_velocityX;
+        float m_velocityY;
+        float m_maxVelocity;
+        float m_digSpeed; //in seconds
 
-    friend void draw(sf::RenderWindow &window, const Character &character, sf::Vector2f cameraPos);
-    friend class KeyboardCharacterMover;
+        friend class KeyboardCharacterMover;
 };
 
 #endif

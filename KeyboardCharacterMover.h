@@ -8,6 +8,7 @@
 class Character;
 class TilesMap;
 class Camera;
+class Background;
 
 class KeyboardCharacterMover
 {
@@ -18,18 +19,20 @@ class KeyboardCharacterMover
 
         void addDirection(Direction direction);
         void removeDirection(Direction direction);
-        void move(Character &character, TilesMap &tilesMap, Camera &camera, sf::Time elapsedTime);
+        void move(sf::RenderWindow &window, Character &character, TilesMap &tilesMap, Camera &camera, Background &background, sf::Time elapsedTime);
 
     private:
+        void dig(sf::RenderWindow &window, Character &character, TilesMap &tilesMap, Camera &camera, Background &background, sf::Vector2i blockPos, Direction digDirection);
+
         bool m_south;
         bool m_north;
         bool m_east;
         bool m_west;
 
         Collisions m_collisions;
-        bool m_result;
+        Collisions::CollisionType m_result;
+        sf::Vector2i m_blockPos; //the block who's going to be digged
         sf::Rect<float> m_testRect;
-        sf::Rect<float> m_initialCharacterRect;
 
 };
 #endif

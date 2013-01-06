@@ -27,19 +27,24 @@ class TilesMap
         };
 
         sf::Texture m_tileSet;
-        sf::Vector2<int> m_tileSetSize;
+        sf::Vector2i m_tileSetSize;
         std::map<int, TileProp> m_tilesProps; //to keep our TileProp
 
+        //to draw
+        sf::Sprite m_tile;
+        sf::Vector2<int> m_camOffSet;
+        sf::Rect<int> m_bounds;
 
     public:
-        TilesMap();
+        TilesMap(int tileSizeX, int tileSizeY);
         void create();
         TileProp getTileProp(int tile) const;
         sf::Vector2i getWorldSize() const { return m_worldSize; }
         sf::Vector2i getTileSize() const { return m_tileSize; }
+        void setTile(int x, int y, int blockID);
 
 
-        friend void draw(sf::RenderWindow &window, const TilesMap &tilesMap, const Camera &camera);
+        friend void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera);
         friend class Collisions;
 };
 
