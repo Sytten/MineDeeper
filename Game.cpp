@@ -14,6 +14,8 @@ void Game::start()
 
     m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper", sf::Style::Close); //window is not resizable
 
+    m_mainWindow.setFramerateLimit(60);
+
     m_tilesMap.create();
 
     m_gameState = Game::ShowingMenu;

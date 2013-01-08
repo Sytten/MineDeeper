@@ -68,16 +68,16 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
 
     //if one direction is true, add ou delete 3 to the velocity (x or y)
     if(m_north)
-        character.m_velocityY -= 3.0f;
+        character.m_velocityY -= 13.0f;
 
     if(m_south)
-        character.m_velocityY += 3.0f;
+        character.m_velocityY += 13.0f;
 
     if(m_east)
-        character.m_velocityX += 3.0f;
+        character.m_velocityX += 13.0f;
 
     if(m_west)
-        character.m_velocityX -= 3.0f;
+        character.m_velocityX -= 13.0f;
 
 
     //check if the velocity are higher than the max
@@ -111,14 +111,21 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
         if(m_blockPos.x < character.characterRect.left && m_west)
         {
             dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::WEST);
+            character.m_velocityX = 0;
             return;
         }
         if(m_blockPos.x > character.characterRect.left && m_east)
         {
             dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::EAST);
+            character.m_velocityX = 0;
             return;
         }
     }
+    else
+    {
+        m_testRect.left = character.characterRect.left;
+    }
+
     //collisions in y axis
     m_testRect.top += elapsedTime.asSeconds()* character.m_velocityY; //add movement
     m_result = m_collisions.collidedY(m_testRect, tilesMap, m_blockPos);
@@ -132,6 +139,7 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
         if(m_blockPos.y > character.characterRect.left && m_south)
         {
             dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::SOUTH);
+            character.m_velocityY = 0;
         }
     }
 }
@@ -167,10 +175,10 @@ void KeyboardCharacterMover::dig(sf::RenderWindow &window, Character &character,
     while(!finished)
     {
         //check if the difference between the actual pos and the target pos is less than 1 px, if so just snap to the target
-        if((targetPos.x - character.characterRect.left <= 1.0f && digDirection != KeyboardCharacterMover::WEST) || (character.characterRect.left - targetPos.x <= 1.0f && digDirection == KeyboardCharacterMover::WEST))
+        if((targetPos.x - character.characterRect.left <= 1.0f && targetPos.x - character.characterRect.left >= 0) || (character.characterRect.left - targetPos.x <= 1.0f && character.characterRect.left - targetPos.x >= 0))
             character.characterRect.left = targetPos.x;
 
-        if((targetPos.y - character.characterRect.top <= 1.0f && digDirection != KeyboardCharacterMover::WEST) || (character.characterRect.top - targetPos.y <= 1.0f && digDirection == KeyboardCharacterMover::WEST))
+        if((targetPos.y - character.characterRect.top <= 1.0f && targetPos.y - character.characterRect.top >= 0) || (character.characterRect.top - targetPos.y <= 1.0f && character.characterRect.top - targetPos.y >= 0))
             character.characterRect.top = targetPos.y;
 
         //move the character each 40ms

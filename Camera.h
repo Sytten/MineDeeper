@@ -13,7 +13,7 @@ class Camera
         sf::Vector2f getPosition() const;
         sf::Rect<float> getCameraRect () const;
         sf::Vector2i getOffset(sf::Vector2i tileSize) const;
-        sf::Rect<int> getBounds(sf::Vector2i tileSize) const;
+        sf::Rect<int> getBounds(sf::Vector2i tileSize, sf::Vector2i worldSize) const;
 
     private:
         sf::Rect<float> m_cameraRect;

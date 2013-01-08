@@ -27,7 +27,6 @@ Collisions::CollisionType Collisions::collidedX(sf::Rect<float> const& character
         for(int y = m_ymin; y <= m_ymax; y++)
         {
             bool result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable; //check if we can go on the tile
-            int test = tilesMap.m_world[x][y];
             if(!result) //if not, then check if we can dig it
             {
                 impact = Collisions::Collision;

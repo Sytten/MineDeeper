@@ -13,7 +13,8 @@ void draw(sf::RenderWindow &window, Game &game)
 void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera)
 {
     tilesMap.m_camOffSet = camera.getOffset(tilesMap.m_tileSize);
-    tilesMap.m_bounds = camera.getBounds(tilesMap.m_tileSize);
+    tilesMap.m_bounds = camera.getBounds(tilesMap.m_tileSize, tilesMap.m_worldSize);
+    sf::Vector2f test = camera.getPosition();
 
     for(int y = 0, tileY = tilesMap.m_bounds.top; y < tilesMap.m_bounds.height; y++, tileY++)
     {

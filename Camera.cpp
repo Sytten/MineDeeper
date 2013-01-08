@@ -32,8 +32,11 @@ sf::Vector2i Camera::getOffset(sf::Vector2i tileSize) const
     return sf::Vector2i((int)(m_cameraRect.left) % (tileSize.x), (int)(m_cameraRect.top) % (tileSize.y));
 }
 
-sf::Rect<int> Camera::getBounds(sf::Vector2i tileSize) const
+sf::Rect<int> Camera::getBounds(sf::Vector2i tileSize, sf::Vector2i worldSize) const
 {
+    if(m_cameraRect.left + m_cameraRect.width == worldSize.x)
+        return sf::Rect<int>((int)(m_cameraRect.left / tileSize.x), (int)(m_cameraRect.top / tileSize.y), (int)(m_cameraRect.width / tileSize.x), (int)(m_cameraRect.height / tileSize.y + 1));
+
     return sf::Rect<int>((int)(m_cameraRect.left / tileSize.x), (int)(m_cameraRect.top / tileSize.y), (int)(m_cameraRect.width / tileSize.x + 1), (int)(m_cameraRect.height / tileSize.y + 1));
 }
 
