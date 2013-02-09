@@ -1,3 +1,16 @@
+// ---------------------------------------------------------------------------
+// This software is in the public domain, furnished "as is", without technical
+// support, and with no warranty, express or implied, as to its usefulness for
+// any purpose.
+//
+// Background.cpp
+// Background manages the image of the background (texture, scale, etc.).
+//
+// Author: Sytten
+// Creation date: 05/01/2013
+// Last modification date: 26/01/2013
+// ---------------------------------------------------------------------------
+
 #include "Background.h"
 #include "ImageException.h"
 #include <iostream>

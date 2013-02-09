@@ -1,3 +1,17 @@
+// ---------------------------------------------------------------------------
+// This software is in the public domain, furnished "as is", without technical
+// support, and with no warranty, express or implied, as to its usefulness for
+// any purpose.
+//
+// TilesMap.h
+// The header file of the TilesMap object. See the cpp file for more
+// information about the class.
+//
+// Author: Sytten
+// Creation date: 05/11/2012
+// Last modification date: 01/02/2013
+// ---------------------------------------------------------------------------
+
 #ifndef MAP_H
 #define MAP_H
 
@@ -24,16 +38,19 @@ class TilesMap
             public:
             sf::Rect<int> posInTileSet;
             bool walkable;
+            bool diggable;
+            bool ore;
+            bool door;
         };
 
         sf::Texture m_tileSet;
         sf::Vector2i m_tileSetSize;
         std::map<int, TileProp> m_tilesProps; //to keep our TileProp
 
-        //to draw
-        sf::Sprite m_tile;
-        sf::Vector2<int> m_camOffSet;
-        sf::Rect<int> m_bounds;
+        // To draw
+            sf::Sprite m_tile;
+            sf::Vector2<int> m_camOffSet;
+            sf::Rect<int> m_bounds;
 
     public:
         TilesMap(int tileSizeX, int tileSizeY);

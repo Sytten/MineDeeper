@@ -1,3 +1,17 @@
+// ---------------------------------------------------------------------------
+// This software is in the public domain, furnished "as is", without technical
+// support, and with no warranty, express or implied, as to its usefulness for
+// any purpose.
+//
+// Background.h
+// The header file of the Background object. See the cpp file for more
+// information about the class.
+//
+// Author: Sytten
+// Creation date: 05/01/2013
+// Last modification date: 26/01/2013
+// ---------------------------------------------------------------------------
+
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 

@@ -1,14 +1,30 @@
+// ---------------------------------------------------------------------------
+// This software is in the public domain, furnished "as is", without technical
+// support, and with no warranty, express or implied, as to its usefulness for
+// any purpose.
+//
+// MainMenu.cpp
+// MainMenu manages the menu you see when you start the game. It handles the
+// user's clicks.
+//
+// Author: Sytten
+// Creation date: 05/01/2013
+// Last modification date: 26/01/2013
+// ---------------------------------------------------------------------------
+
 #include "MainMenu.h"
 #include "ImageException.h"
 
 MainMenu::MainMenu()
 {
-    if(!m_mainMenuImage.loadFromFile("mainmenu.png")) //load our Main menu image
-        throw ImageException("mainemenu.png");
+// Load the image of the main menu
+    if(!m_mainMenuImage.loadFromFile("mainmenu.png"))
+        throw ImageException("mainemenu.png"); // If it fails, throw an error
 
-    m_mainMenuSprite.setTexture(m_mainMenuImage); //set the sprite
+// Set the sprite texture
+    m_mainMenuSprite.setTexture(m_mainMenuImage);
 
-    //create the rects for the main menu buttons
+// Create the rectangles for the buttons of the main menu
     MenuButton playButton;
         playButton.rect.left = 100;
         playButton.rect.top = 100;
@@ -23,21 +39,24 @@ MainMenu::MainMenu()
         exitButton.rect.height = 230;
         exitButton.action = EXIT;
 
-    //put the rects in a list to acces them later
+// Put the rectangles in a list to be able access them later
     m_menuButtons.push_back(playButton);
     m_menuButtons.push_back(exitButton);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 MainMenu::MenuChoice MainMenu::HandleClick(int x, int y)
 {
+// Create an iterator to run through the list of buttons
     std::list<MenuButton>::iterator it;
 
-    for( it = m_menuButtons.begin(); it != m_menuButtons.end(); it++) //with the iterator check the rects (in the list)
+// Check if the player clicked on a button
+    for( it = m_menuButtons.begin(); it != m_menuButtons.end(); it++)
     {
-        sf::Rect<int> menuButtonRect = (*it).rect;
-        if(x > menuButtonRect.left && x < (menuButtonRect.left + menuButtonRect.width) && y > menuButtonRect.top && y < (menuButtonRect.top + menuButtonRect.height)) //if the player clicked on a button
-           return (*it).action; //return the action on the this button
+        m_menuButtonRect = (*it).rect;
+        if(x > m_menuButtonRect.left && x < (m_menuButtonRect.left + m_menuButtonRect.width) && y > m_menuButtonRect.top && y < (m_menuButtonRect.top + m_menuButtonRect.height))
+           return (*it).action; // Return the action of the button
     }
 
     return NOTHING; //else return nothing

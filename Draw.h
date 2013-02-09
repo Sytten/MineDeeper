@@ -1,3 +1,17 @@
+// ---------------------------------------------------------------------------
+// This software is in the public domain, furnished "as is", without technical
+// support, and with no warranty, express or implied, as to its usefulness for
+// any purpose.
+//
+// Draw.h
+// The header file of the draw module. See the cpp file for more
+// information about the module.
+//
+// Author: Sytten
+// Creation date: 07/11/2012
+// Last modification date: 26/01/2013
+// ---------------------------------------------------------------------------
+
 #ifndef DRAW_H
 #define DRAW_H
 
