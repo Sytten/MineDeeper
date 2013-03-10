@@ -18,7 +18,7 @@
 MainMenu::MainMenu()
 {
 // Load the image of the main menu
-    if(!m_mainMenuImage.loadFromFile("mainmenu.png"))
+    if(!m_mainMenuImage.loadFromFile("data/mainmenu.png"))
         throw ImageException("mainemenu.png"); // If it fails, throw an error
 
 // Set the sprite texture
@@ -52,7 +52,7 @@ MainMenu::MenuChoice MainMenu::HandleClick(int x, int y)
     std::list<MenuButton>::iterator it;
 
 // Check if the player clicked on a button
-    for( it = m_menuButtons.begin(); it != m_menuButtons.end(); it++)
+    for( it = m_menuButtons.begin(); it != m_menuButtons.end(); ++it)
     {
         m_menuButtonRect = (*it).rect;
         if(x > m_menuButtonRect.left && x < (m_menuButtonRect.left + m_menuButtonRect.width) && y > m_menuButtonRect.top && y < (m_menuButtonRect.top + m_menuButtonRect.height))

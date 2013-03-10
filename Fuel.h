@@ -18,6 +18,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Bar.h"
+#include "FuelBuilding.h"
 
 class Fuel
 {
@@ -34,6 +35,8 @@ class Fuel
         int m_fuel;
         int m_maxFuel;
         Bar m_fuelBar;
+
+    friend class FuelBuilding;
 };
 
 #endif // FUEL_H

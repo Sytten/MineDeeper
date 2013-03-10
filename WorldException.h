@@ -3,33 +3,34 @@
 // support, and with no warranty, express or implied, as to its usefulness for
 // any purpose.
 //
-// ImageException.h
-// ImageException is an exception that is thrown when image can't be loaded.
+// WorldException.h
+// WorldException is an exception that is thrown when there's a problem with
+// world's configuration file.
 //
 // Author: Sytten
 // Creation date: 05/01/2013
 // Last modification date: 26/01/2013
 // ---------------------------------------------------------------------------
 
-#ifndef IMAGEEXCEPTION_H
-#define IMAGEEXCEPTION_H
+#ifndef WORLDEXCEPTION_H
+#define WORLDEXCEPTION_H
 
 #include <exception>
 #include <sstream>
 
-class ImageException : public std::exception
+class WorldException : public std::exception
 {
     public:
         // In the constructor we create the message
-            ImageException(std::string imageName)
+            WorldException(int line)
             {
                 std::ostringstream oss;
-                oss << "The image " << imageName << " cannot be loaded. Make sure it's in the data folder.";
+                oss << "A problem occurred at line " << line << " in the world configuration file's. Check if it's more than 100%.";
                 this->m_msg = oss.str();
 
             }
         // Virtual destructor
-            virtual ~ImageException() throw()
+            virtual ~WorldException() throw()
             {
             }
 
@@ -43,4 +44,4 @@ class ImageException : public std::exception
         std::string m_msg;
 };
 
-#endif // IMAGEEXCEPTION_H
+#endif // WORLDEXCEPTION_H

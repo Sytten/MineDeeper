@@ -35,13 +35,14 @@ class Character
             void setCharacterPosition(float x, float y);
 
         // Getters of different variables
-            Money getMoney() { return m_money; }
-            Artifacts getArtifacts() { return m_artifacts; }
-            Life getLife() { return m_life; }
-            Fuel getFuel() { return m_fuel; }
-            ResourcesInventory getResourcesInventory() { return m_ressourcesInventory; }
+            Money& getMoney() { return m_money; }
+            Artifacts& getArtifacts() { return m_artifacts; }
+            Life& getLife() { return m_life; }
+            Fuel& getFuel() { return m_fuel; }
+            ResourcesInventory& getResourcesInventory() { return m_ressourcesInventory; }
             sf::Sprite const& getCharacterSprite() const { return m_characterSprite; }
             sf::Rect<float> const& getCharacterRect() const { return m_characterRect; }
+            float getvelocity() {return m_velocityY;}
 
     private:
         sf::Texture m_characterTexture;

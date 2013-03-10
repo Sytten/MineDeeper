@@ -12,16 +12,26 @@
 // Last modification date: 03/02/2013
 // ---------------------------------------------------------------------------
 
+#include    <string>
+
 #include "Bar.h"
 #include "ImageException.h"
 
-Bar::Bar(std::string fullBarTextureName, std::string shapeBarTextureName, sf::Vector2f fullBarPos, sf::Vector2f shapeBarPos, Orientation orientation) : m_orientation(orientation)
+using namespace std;
+
+Bar::Bar(string fullBarTextureName, string shapeBarTextureName, sf::Vector2f fullBarPos, sf::Vector2f shapeBarPos, Orientation orientation) : m_orientation(orientation)
 {
+    // Create the directory string
+        string directory = "data/";
+
     // Load the textures
-        if(!m_fullBarTexture.loadFromFile(fullBarTextureName))
+        directory += fullBarTextureName;
+        if(!m_fullBarTexture.loadFromFile(directory))
             throw ImageException(fullBarTextureName);
 
-        if(!m_shapeBarTexture.loadFromFile(shapeBarTextureName))
+        directory = "data/";
+        directory += shapeBarTextureName;
+        if(!m_shapeBarTexture.loadFromFile(directory))
             throw ImageException(shapeBarTextureName);
 
     // Set the textures and the positions
@@ -34,11 +44,11 @@ Bar::Bar(std::string fullBarTextureName, std::string shapeBarTextureName, sf::Ve
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Bar::calculateBarSize(int maximum, int actual)
+void Bar::calculateBarSize(int const& maximum, int const& actual)
 {
     if(m_orientation == HORIZONTAL) // Calculate the length of the bar, it's just the width who change
-        m_fullBarSprite.setTextureRect(sf::Rect<int>(0,0,(int)(actual*m_fullBarTexture.getSize().x/maximum),(int)m_fullBarTexture.getSize().y));
+        m_fullBarSprite.setTextureRect(sf::Rect<int>(0, 0, (int)(actual*m_fullBarTexture.getSize().x/maximum), (int)m_fullBarTexture.getSize().y));
 
     if(m_orientation == VERTICAL) // Calculate the length of the bar, it's just the height who change
-        m_fullBarSprite.setTextureRect(sf::Rect<int>(0,0,m_fullBarTexture.getSize().x,(int)(actual*m_fullBarTexture.getSize().y/maximum)));
+        m_fullBarSprite.setTextureRect(sf::Rect<int>(0, 0, m_fullBarTexture.getSize().x, (int)(actual*m_fullBarTexture.getSize().y/maximum)));
 }

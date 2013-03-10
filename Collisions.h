@@ -28,6 +28,7 @@ class Collisions
         // Functions to check collisions
             CollisionType collidedX(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos);
             CollisionType collidedY(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos);
+            unsigned collidedBuilding(sf::Rect<float> const& characterRect, TilesMap const& tilesMap);
 
     private:
         // Tiles touched by the player
@@ -41,6 +42,7 @@ class Collisions
             sf::Rect<float> m_tileRect;
             sf::Rect<float> m_intersection;
             bool m_result;
+            bool m_result2;
 };
 
 #endif

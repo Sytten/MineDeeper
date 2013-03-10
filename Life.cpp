@@ -12,6 +12,8 @@
 // ---------------------------------------------------------------------------
 
 #include "Life.h"
+#include <cstdlib>
+#include <iostream>
 
                // Start with a full life
 Life::Life() : m_life(100), m_maxLife(100), m_lifeBar("lifefull.png", "lifeshape.png", sf::Vector2f(19,13), sf::Vector2f(10,10))

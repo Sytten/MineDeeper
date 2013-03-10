@@ -17,10 +17,10 @@
 
 using namespace std;
 
-Character::Character() : m_characterRect(375, 350, 75, 50), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(2)
+Character::Character() : m_characterRect(381, 700, 63, 50), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(2)
 {
     // Load the character`s texture
-        if(!m_characterTexture.loadFromFile("vehicule.png"))
+        if(!m_characterTexture.loadFromFile("data/vehicule.png"))
             throw ImageException("vehicule.png"); // If it fails, throw an error
 
     m_characterSprite.setTexture(m_characterTexture);
@@ -31,7 +31,9 @@ Character::Character() : m_characterRect(375, 350, 75, 50), m_velocityX(0), m_ve
 void Character::setCharacterTexture(string textureName)
 {
     // Load the character`s texture
-        if(!m_characterTexture.loadFromFile(textureName))
+        string directory = "data/";
+            directory += textureName;
+        if(!m_characterTexture.loadFromFile(directory))
             throw ImageException(textureName); // If it fails, throw an error
 
     // Set the character's texture and adjust the view

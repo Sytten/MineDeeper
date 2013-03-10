@@ -38,15 +38,21 @@ m_impact = Collisions::NoCollision;
         m_xmax--;
 
 // Check each tile
-    for(int x = m_xmin; x <= m_xmax; x++)
+    for(int x = m_xmin; x <= m_xmax; ++x)
     {
-        for(int y = m_ymin; y <= m_ymax; y++)
+        for(int y = m_ymin; y <= m_ymax; ++y)
         {
             // Check if we can walk on the tile
                 m_result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable;
 
-            // If we can`t, then check if we can dig it
+            // If we can't set m_impact to Collision
                 if(!m_result)
+                    m_impact = Collisions::Collision;
+
+            // Then check if we can dig it
+                m_result2 = tilesMap.getTileProp(tilesMap.m_world[x][y]).diggable;
+
+                if(m_result2)
                 {
                     m_impact = Collisions::Collision; // Because we collided even if we don't dig
 
@@ -99,15 +105,21 @@ m_impact = NoCollision;
         m_xmax--;
 
 // Check each tile
-    for(int y = m_ymin; y <= m_ymax; y++)
+    for(int y = m_ymin; y <= m_ymax; ++y)
     {
-        for(int x = m_xmin; x <= m_xmax; x++)
+        for(int x = m_xmin; x <= m_xmax; ++x)
         {
             // Check if we can walk on the tile
                 m_result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable;
 
-            // If we can`t, then check if we can dig it
+            // If we can't set m_impact to Collision
                 if(!m_result)
+                    m_impact = Collisions::Collision;
+
+            // Then check if we can dig it
+                m_result2 = tilesMap.getTileProp(tilesMap.m_world[x][y]).diggable;
+
+                if(m_result2)
                 {
                     m_impact = Collisions::Collision; // Because we collided even if we don't dig
 
@@ -133,4 +145,35 @@ m_impact = NoCollision;
     }
 
 return m_impact;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+unsigned Collisions::collidedBuilding(sf::Rect<float> const& characterRect, TilesMap const& tilesMap)
+{
+// Find which tiles are touched by the player
+    m_xmin = characterRect.left / tilesMap.m_tileSize.x;
+    m_xmax = (characterRect.left + characterRect.width) / tilesMap.m_tileSize.x;
+    m_ymin = characterRect.top / tilesMap.m_tileSize.y;
+    m_ymax = (characterRect.top + characterRect.height) / tilesMap.m_tileSize.y;
+
+// If the player is on the limit, don't count the tile
+    if((int)(characterRect.top + characterRect.height) % tilesMap.m_tileSize.y == 0)
+        m_ymax--;
+
+    if((int)(characterRect.left + characterRect.width) % tilesMap.m_tileSize.x == 0)
+        m_xmax--;
+
+// Check each tile
+    for(int y = m_ymin; y <= m_ymax; ++y)
+    {
+        for(int x = m_xmin; x <= m_xmax; ++x)
+        {
+            // Check if the tile is a building and a door
+                if(tilesMap.getTileProp(tilesMap.m_world[x][y]).building && tilesMap.getTileProp(tilesMap.m_world[x][y]).door)
+                    return tilesMap.getTileProp(tilesMap.m_world[x][y]).buildingID; // If yes, return the ID of the building
+        }
+    }
+
+    return 0; // Return 0 because no building has been found (and no building have the ID 0)
 }

@@ -13,7 +13,7 @@
 
 #include "Money.h"
 
-Money::Money() : m_money(500)
+Money::Money() : m_money(20)
 {
 }
 

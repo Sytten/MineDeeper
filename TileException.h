@@ -3,33 +3,34 @@
 // support, and with no warranty, express or implied, as to its usefulness for
 // any purpose.
 //
-// ImageException.h
-// ImageException is an exception that is thrown when image can't be loaded.
+// TileException.h
+// TileException is an exception that is thrown when there's a problem with
+// the configuration of a tile.
 //
 // Author: Sytten
-// Creation date: 05/01/2013
-// Last modification date: 26/01/2013
+// Creation date: 09/03/2013
+// Last modification date: 09/03/2013
 // ---------------------------------------------------------------------------
 
-#ifndef IMAGEEXCEPTION_H
-#define IMAGEEXCEPTION_H
+#ifndef TILEEXCEPTION_H
+#define TILEEXCEPTION_H
 
 #include <exception>
 #include <sstream>
 
-class ImageException : public std::exception
+class TileException : public std::exception
 {
     public:
         // In the constructor we create the message
-            ImageException(std::string imageName)
+            TileException(int tileID)
             {
                 std::ostringstream oss;
-                oss << "The image " << imageName << " cannot be loaded. Make sure it's in the data folder.";
+                oss << "A problem occurred with the tile number " << tileID << ". Check in the configuration file to correct the error.";
                 this->m_msg = oss.str();
 
             }
         // Virtual destructor
-            virtual ~ImageException() throw()
+            virtual ~TileException() throw()
             {
             }
 
@@ -43,4 +44,4 @@ class ImageException : public std::exception
         std::string m_msg;
 };
 
-#endif // IMAGEEXCEPTION_H
+#endif // TILEEXCEPTION_H

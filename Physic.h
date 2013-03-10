@@ -25,7 +25,7 @@ class Physic
             void changeGravity(int gravity);
 
         // Function to check if the player must bounce
-            void checkRebound(float& velocitY);
+            bool checkRebound(float& velocitY);
 
     private:
         int m_gravity;

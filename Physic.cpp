@@ -35,10 +35,15 @@ void Physic::changeGravity(int gravity)
 
 /////////////////////////////////////////////////////////////////////
 
-void Physic::checkRebound(float& velocityY)
+bool Physic::checkRebound(float& velocityY)
 {
     if(velocityY > 700)
+    {
         velocityY /= -3;
+        return true;
+    }
+
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////

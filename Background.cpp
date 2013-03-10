@@ -19,7 +19,10 @@ using namespace std;
 
 Background::Background(string backgroundFileName)
 {
-    if(!m_background.loadFromFile(backgroundFileName))
+    string directory = "data/";
+        directory += backgroundFileName;
+
+    if(!m_background.loadFromFile(directory))
         throw ImageException(backgroundFileName);
 
     m_backgroundSprite.setTexture(m_background);
@@ -27,7 +30,10 @@ Background::Background(string backgroundFileName)
 
 Background::Background(std::string backgroundFileName, sf::Vector2f scale) : m_scale(scale)
 {
-    if(!m_background.loadFromFile(backgroundFileName))
+    string directory = "data/";
+        directory += backgroundFileName;
+
+    if(!m_background.loadFromFile(directory))
         throw ImageException(backgroundFileName);
 
     m_backgroundSprite.setTexture(m_background);
@@ -36,7 +42,10 @@ Background::Background(std::string backgroundFileName, sf::Vector2f scale) : m_s
 
 void Background::setBackground(string backgroundFileName)
 {
-    if(!m_background.loadFromFile(backgroundFileName))
+    string directory = "data/";
+        directory += backgroundFileName;
+
+    if(!m_background.loadFromFile(directory))
         throw ImageException(backgroundFileName);
 
     m_backgroundSprite.setTexture(m_background);

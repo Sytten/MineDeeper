@@ -9,15 +9,17 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 26/01/2013
+// Last modification date: 18/02/2013
 // ---------------------------------------------------------------------------
 
 #ifndef GAME_H
 #define GAME_H
 
-#include <utility>
+#include <memory>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <SFGUI/SFGUI.hpp>
 
 #include "TilesMap.h"
 #include "Character.h"
@@ -25,34 +27,57 @@
 #include "Camera.h"
 #include "MainMenu.h"
 #include "Background.h"
+#include "FuelBuilding.h"
+#include "SellBuilding.h"
+#include "Collisions.h"
+#include "Building.h"
+#include "Filter.h"
 
 class Game
 {
     public:
         Game();
-        void start();
+
+        // Main game loop
+            void gameLoop();
 
     private:
-        // Main game loop
-        void gameLoop();
+        // Game states loops
+            void playLoop(sf::Event& currentEvent, sf::Clock& clock);
+            void mainMenuLoop(sf::Event& currentEvent);
+            void pausedLoop(sf::Event& currentEvent);
+            void enterBuilding();
+            void gameOver();
 
-        // Game state
-        enum GameState { Uninitialized, Paused, ShowingMenu, Playing, Exiting };
-            GameState m_gameState;
+        // Game states
+            enum GameState { Uninitialized, Paused, ShowingMenu, Playing, Exiting };
+                GameState m_gameState;
 
         // Main window
-        sf::RenderWindow m_mainWindow;
-            sf::Vector2<int> m_windowSize;
+            sf::RenderWindow m_mainWindow;
+                sf::Vector2f m_windowSize;
+
+        // Main menu object
+            std::unique_ptr<MainMenu> m_mainMenu;
 
         // Game objects
-        TilesMap m_tilesMap;
-        Character m_character;
-        KeyboardCharacterMover m_characterMover;
-        Camera m_camera;
-        Background m_background;
+            std::unique_ptr<TilesMap> m_tilesMap;
+            std::unique_ptr<Character> m_character;
+            std::unique_ptr<KeyboardCharacterMover> m_characterMover;
+                std::unique_ptr<Collisions> m_collisions;
+            std::unique_ptr<Camera> m_camera;
+            std::unique_ptr<Background> m_background;
+            sfg::SFGUI m_sfgui;
+                std::vector< std::unique_ptr<Building> > m_buildings;
+
+        // Paused and Game over objects
+            sf::Text m_text;
+            sf::Font m_eastwoodFont;
+            std::unique_ptr<Filter> m_gameOverfilter;
+            sf::RectangleShape m_pausedFilter;
 
     // Draw can now access all the private variables of the class
-    friend void draw(sf::RenderWindow &window, Game &game);
+        friend void draw(sf::RenderWindow &window, Game &game);
 
 };
 #endif

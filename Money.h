@@ -15,6 +15,9 @@
 #ifndef MONEY_H
 #define MONEY_H
 
+#include "FuelBuilding.h"
+#include "SellBuilding.h"
+
 class Money
 {
     public:
@@ -25,6 +28,9 @@ class Money
 
     private:
         unsigned m_money;
+
+    friend void FuelBuilding::setMoneyLabel();
+    friend void SellBuilding::setMoneyLabel();
 };
 
 #endif // MONEY_H

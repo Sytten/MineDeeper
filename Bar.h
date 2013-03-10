@@ -23,7 +23,7 @@ class Bar
         enum Orientation{HORIZONTAL = 0, VERTICAL};
 
         Bar(std::string fullBarTextureName, std::string shapeBarTextureName, sf::Vector2f fullBarPos, sf::Vector2f shapeBarPos, Orientation orientation = HORIZONTAL);
-        void calculateBarSize(int maximum, int actual);
+        void calculateBarSize(int const& maximum, int const& actual);
         sf::Sprite const& getFullBarSprite() const { return m_fullBarSprite; }
         sf::Sprite const& getShapeBarSprite() const { return m_shapeBarSprite; }
 

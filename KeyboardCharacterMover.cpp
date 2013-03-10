@@ -9,7 +9,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 26/01/2013
+// Last modification date: 09/03/2013
 // ---------------------------------------------------------------------------
 
 #include "KeyboardCharacterMover.h"
@@ -51,7 +51,7 @@ void KeyboardCharacterMover::addDirection(Direction direction)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void KeyboardCharacterMover::removeDirection(Direction direction) //set the given direction to false, so we don't move our character
+void KeyboardCharacterMover::removeDirection(Direction direction) // Set the given direction to false, so we don't move our character
 {
 // Set the given direction to false, so we won't move our character in that direction
     switch(direction)
@@ -76,12 +76,42 @@ void KeyboardCharacterMover::removeDirection(Direction direction) //set the give
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character, TilesMap &tilesMap, Camera &camera, Background &background, sf::Time elapsedTime)
+void KeyboardCharacterMover::checkStateOfKeys()
+{
+// Check direction if a key is pressed to go in that direction, if not: set it to false
+    // Check north direction
+        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::W) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Up))
+            m_north = true;
+        else
+            m_north = false;
+
+    // Check south direction
+        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::S) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Down))
+            m_south = true;
+        else
+            m_south = false;
+
+    // Check east direction
+        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::D) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Right))
+            m_east = true;
+        else
+            m_east = false;
+
+    // Check west direction
+        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::A) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Left))
+            m_west = true;
+        else
+            m_west = false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character, Collisions &collisions, TilesMap &tilesMap, Camera &camera, Background &background, sf::Time elapsedTime)
 {
 // Check if we`re flying
     m_testRect = character.m_characterRect;
     m_testRect.top++;
-    m_result = m_collisions.collidedY(m_testRect, tilesMap, m_blockPos);
+    m_result = collisions.collidedY(m_testRect, tilesMap, m_blockPos);
     if(m_result == Collisions::NoCollision)
         m_flying = true;
 
@@ -135,7 +165,7 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
 
     // Collisions in x axis
         m_testRect.left += elapsedTime.asSeconds()* character.m_velocityX; // Add x movement
-        m_result = m_collisions.collidedX(m_testRect, tilesMap, m_blockPos); // Test
+        m_result = collisions.collidedX(m_testRect, tilesMap, m_blockPos); // Test
 
     // If there're no collision
         if(m_result == Collisions::NoCollision)
@@ -168,7 +198,7 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
 // Collisions in y axis
     m_testRect.left = character.m_characterRect.left; // Because we don't care about the movement in x axis
     m_testRect.top += elapsedTime.asSeconds()* character.m_velocityY; // Add y movement
-    m_result = m_collisions.collidedY(m_testRect, tilesMap, m_blockPos); // Test
+    m_result = collisions.collidedY(m_testRect, tilesMap, m_blockPos); // Test
     // If there's no collision
         if(m_result == Collisions::NoCollision)
         {
@@ -185,18 +215,20 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
                     dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::SOUTH);
                     character.m_velocityY = 0;
                 }
-            else
-            {
-                //Check rebound in y axis
-                    m_physic.checkRebound(character.m_velocityY);
+                else
+                {
+                    m_characterVelocityY = character.m_velocityY;
+                    //Check rebound in y axis
+                        if(m_physic.checkRebound(character.m_velocityY))
+                            character.getLife().removeLife(m_characterVelocityY*1/20);
 
-                //If there's no rebound
-                    if(m_blockPos.y > character.m_characterRect.top && character.m_velocityY <= 700 && character.m_velocityY >= 0)
-                    {
-                        m_flying = false;
-                        character.m_velocityY = 0;
-                    }
-            }
+                    //If there's no rebound
+                        if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY <= 700 && m_characterVelocityY >= 0)
+                        {
+                            m_flying = false;
+                            character.m_velocityY = 0;
+                        }
+                }
         }
         else
         {
@@ -270,6 +302,14 @@ while(!finished)
         if(targetPos.x == character.m_characterRect.left && targetPos.y == character.m_characterRect.top)
             finished = true;
 }
+// Add the resource in the character inventory
+    int blockID = tilesMap.getTile((blockPos.x/tilesMap.getTileSize().x), (blockPos.y/tilesMap.getTileSize().y));
+    if(tilesMap.getTileProp(blockID).ore)
+        character.getResourcesInventory().addResource(blockID, tilesMap.getTileProp(blockID).name, tilesMap.getTileProp(blockID).price);
+
+// If it's an artifact, add it to the player inventory
+    if(tilesMap.getTileProp(blockID).artifact)
+        character.getArtifacts().foundArtifact();
 
 // Change the block who has been dig to air
     tilesMap.setTile((blockPos.x/tilesMap.getTileSize().x), (blockPos.y/tilesMap.getTileSize().y), 2);

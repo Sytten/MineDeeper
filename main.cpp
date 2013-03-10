@@ -5,7 +5,7 @@
 //
 // Author: Sytten
 // Creation date: 05/11/2012
-// Last modification date: 26/01/2013
+// Last modification date: 18/02/2013
 // ---------------------------------------------------------------------------
 
 #include <SFML/Graphics.hpp>
@@ -19,17 +19,17 @@ int main()
     try
     {
         Game game; //create our map object
-        game.start(); //start the initializer et the game after
+        game.gameLoop(); //start the game
     }
     //handle errors
     catch(std::exception &e)
     {
-        std::cerr << "An exception occured : " << e.what() << std::endl;
+        std::cerr << "An exception occurred : " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
     catch(...)
     {
-        std::cerr << "An unexpected exception occured !" << std::endl;
+        std::cerr << "An unexpected exception occurred !" << std::endl;
         return EXIT_FAILURE;
     }
 

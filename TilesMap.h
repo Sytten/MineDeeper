@@ -9,11 +9,11 @@
 //
 // Author: Sytten
 // Creation date: 05/11/2012
-// Last modification date: 01/02/2013
+// Last modification date: 05/03/2013
 // ---------------------------------------------------------------------------
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef TILESMAP_H
+#define TILESMAP_H
 
 #include <map>
 
@@ -26,13 +26,6 @@ class Camera;
 class TilesMap
 {
     private:
-        void loadTileSet();
-        void loadLevel();
-
-        sf::Vector2i m_tileSize;
-        sf::Vector2i m_worldSize;
-        std::vector<std::vector<int> > m_world; //our world
-
         struct TileProp
         {
             public:
@@ -41,29 +34,45 @@ class TilesMap
             bool diggable;
             bool ore;
             bool door;
+            bool building;
+                unsigned buildingID;
+            bool artifact;
+            std::string name;
+            int price;
         };
 
-        sf::Texture m_tileSet;
-        sf::Vector2i m_tileSetSize;
-        std::map<int, TileProp> m_tilesProps; //to keep our TileProp
+    public:
+        TilesMap(int tileSizeX, int tileSizeY);
+        TileProp getTileProp(int tile) const;
+        sf::Vector2i getWorldSize() const { return m_worldSize; }
+        sf::Vector2i getTileSize() const { return m_tileSize; }
+        void setTile(int x, int y, int blockID);
+        int getTile(int x, int y);
+
+    private:
+        void loadTileSet();
+        void loadLevel();
+
+        // World related variables
+            sf::Vector2i m_tileSize;
+            sf::Vector2i m_worldSize;
+            std::vector<std::vector<int> > m_world; // Our world
+
+        // TileSet related variables
+            sf::Texture m_tileSet;
+            sf::Vector2i m_tileSetSize;
+            std::map<int, TileProp> m_tilesProps; // To keep our TileProp
+            std::map<int, TileProp>::iterator m_iter;
 
         // To draw
             sf::Sprite m_tile;
             sf::Vector2<int> m_camOffSet;
             sf::Rect<int> m_bounds;
 
-    public:
-        TilesMap(int tileSizeX, int tileSizeY);
-        void create();
-        TileProp getTileProp(int tile) const;
-        sf::Vector2i getWorldSize() const { return m_worldSize; }
-        sf::Vector2i getTileSize() const { return m_tileSize; }
-        void setTile(int x, int y, int blockID);
 
 
         friend void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera);
         friend class Collisions;
 };
-
 
 #endif

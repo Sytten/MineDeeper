@@ -18,9 +18,9 @@
 void draw(sf::RenderWindow &window, Game &game)
 {
     // Each time we draw the background, the map and the character
-        draw(window, game.m_background);
-        draw(window, game.m_tilesMap, game.m_camera);
-        draw(window, game.m_character, game.m_camera.getPosition());
+        draw(window, *(game.m_background));
+        draw(window, *(game.m_tilesMap), *(game.m_camera));
+        draw(window, *(game.m_character), game.m_camera->getPosition());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,9 +32,9 @@ void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera)
         tilesMap.m_bounds = camera.getBounds(tilesMap.m_tileSize, tilesMap.m_worldSize); // Get the bounds so we don`t draw all the map
 
     // Draw each tile
-        for(int y = 0, tileY = tilesMap.m_bounds.top; y < tilesMap.m_bounds.height; y++, tileY++)
+        for(int y = 0, tileY = tilesMap.m_bounds.top; y < tilesMap.m_bounds.height; ++y, ++tileY)
         {
-            for(int x = 0, tileX = tilesMap.m_bounds.left; x < tilesMap.m_bounds.width; x++, tileX++)
+            for(int x = 0, tileX = tilesMap.m_bounds.left; x < tilesMap.m_bounds.width; ++x, ++tileX)
             {
                 // Display the good texture
                     tilesMap.m_tile.setTextureRect(tilesMap.getTileProp(tilesMap.m_world[tileX][tileY]).posInTileSet);
