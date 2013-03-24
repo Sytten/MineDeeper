@@ -7,13 +7,13 @@ or you can repair your robot. If you run out of fuel or life, your robot explode
 
 Authors
 -------
-Sytten - developer
-Vantuan - Graphist
+Sytten - Main Developer 
+Vantuan - Main Graphist
 
 Download
 --------
 You can get the lastest build version (for windows only for now) in the corresponding section.
-If you download the game for the first time, you`ll have to download the zip file with dependencies, but next
+If you download the game for the first time, you will have to download the zip file with dependencies, but next
 time you can download zip file without the depencies except if I make a big update (I'll be written).
 You can also build build your own version if you want, you just have to download the source
 (don`t forget to link SFML and SFGUI).
