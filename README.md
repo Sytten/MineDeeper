@@ -7,7 +7,8 @@ or you can repair your robot. If you run out of fuel or life, your robot explode
 
 Authors
 -------
-Sytten - Main Developer 
+Sytten - Main Developer
+
 Vantuan - Main Graphist
 
 Download
