@@ -13,7 +13,7 @@
 
 #include "Fuel.h"
 
-Fuel::Fuel() : m_fuel(10), m_maxFuel(10), m_fuelBar("fuelfull.png", "fuelshape.png", sf::Vector2f(50,80), sf::Vector2f(10,70))
+Fuel::Fuel() : m_fuel(100), m_maxFuel(100), m_fuelBar("fuelfull.png", "fuelshape.png", sf::Vector2f(50,80), sf::Vector2f(10,70))
 {
 }
 

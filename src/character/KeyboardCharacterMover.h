@@ -36,6 +36,7 @@ class KeyboardCharacterMover
             void addDirection(Direction direction);
             void removeDirection(Direction direction);
             void checkStateOfKeys();
+            void removeAllDirections();
 
         // Function to move the character
             void move(sf::RenderWindow &window, Character &character, Collisions &collisions, TilesMap &tilesMap, Camera &camera, Background &background, sf::Time elapsedTime);

@@ -15,7 +15,7 @@
 #include "../character/Character.h"
 #include "../exceptions/ImageException.h"
 
-FuelBuilding::FuelBuilding(sf::Vector2f const& windowSize, unsigned const& ID) : Building(ID), m_fuelPrice(1), m_wantToExit(false), m_ptrCharacter(nullptr)
+FuelBuilding::FuelBuilding(sf::Vector2f const& windowSize, unsigned const& ID) : Building(ID), m_fuelPrice(0.1f), m_wantToExit(false), m_ptrCharacter(nullptr)
 {
 // Temporary
     m_tank = sfg::ProgressBar::Create(sfg::ProgressBar::HORIZONTAL);

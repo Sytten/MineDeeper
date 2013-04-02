@@ -23,11 +23,11 @@ class TilesMap;
 class Collisions
 {
     public:
-        enum CollisionType{NoCollision, Collision, Diggable};
+        enum CollisionType{NoCollision, Collision, BlockCollision, Diggable};
 
         // Functions to check collisions
-            CollisionType collidedX(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos);
-            CollisionType collidedY(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos);
+            CollisionType collidedX(sf::Rect<float> const& characterRect, int const& digPower, TilesMap const& tilesMap, sf::Vector2i &blockPos);
+            CollisionType collidedY(sf::Rect<float> const& characterRect, int const& digPower, TilesMap const& tilesMap, sf::Vector2i &blockPos);
             unsigned collidedBuilding(sf::Rect<float> const& characterRect, TilesMap const& tilesMap);
 
     private:
@@ -43,6 +43,7 @@ class Collisions
             sf::Rect<float> m_intersection;
             bool m_result;
             bool m_result2;
+            int m_hardness;
 };
 
 #endif

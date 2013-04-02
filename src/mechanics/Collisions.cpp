@@ -16,7 +16,7 @@
 #include "../character/Character.h"
 #include "../mapping/TilesMap.h"
 
-Collisions::CollisionType Collisions::collidedX(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos)
+Collisions::CollisionType Collisions::collidedX(sf::Rect<float> const& characterRect, int const& digPower, TilesMap const& tilesMap, sf::Vector2i &blockPos)
 {
 // Check if the player is out of the screen
     if(characterRect.left < 0 || (characterRect.left + characterRect.width) > tilesMap.m_worldSize.x)
@@ -51,8 +51,9 @@ m_impact = Collisions::NoCollision;
 
             // Then check if we can dig it
                 m_result2 = tilesMap.getTileProp(tilesMap.m_world[x][y]).diggable;
+                m_hardness = tilesMap.getTileProp(tilesMap.m_world[x][y]).hardness;
 
-                if(m_result2)
+                if(m_result2 && m_hardness <= digPower)
                 {
                     m_impact = Collisions::Collision; // Because we collided even if we don't dig
 
@@ -83,7 +84,7 @@ return m_impact;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Collisions::CollisionType Collisions::collidedY(sf::Rect<float> const& characterRect, TilesMap const& tilesMap, sf::Vector2i &blockPos)
+Collisions::CollisionType Collisions::collidedY(sf::Rect<float> const& characterRect,  int const& digPower, TilesMap const& tilesMap, sf::Vector2i &blockPos)
 {
 // Check if the player is out of the screen
     if((characterRect.top) < 0 || (characterRect.top + characterRect.height) > tilesMap.m_worldSize.y)
@@ -112,16 +113,14 @@ m_impact = NoCollision;
             // Check if we can walk on the tile
                 m_result = tilesMap.getTileProp(tilesMap.m_world[x][y]).walkable;
 
-            // If we can't set m_impact to Collision
-                if(!m_result)
-                    m_impact = Collisions::Collision;
-
             // Then check if we can dig it
                 m_result2 = tilesMap.getTileProp(tilesMap.m_world[x][y]).diggable;
+                m_hardness = tilesMap.getTileProp(tilesMap.m_world[x][y]).hardness;
 
-                if(m_result2)
+            // If we can't walk on it set m_impact to Collision
+                if(!m_result)
                 {
-                    m_impact = Collisions::Collision; // Because we collided even if we don't dig
+                    m_impact = Collisions::BlockCollision;
 
                     // Create the tile rectangle
                         m_tileRect.left = x*tilesMap.m_tileSize.x;
@@ -132,13 +131,20 @@ m_impact = NoCollision;
                     // Calculate the intersection
                         characterRect.intersects(m_tileRect, m_intersection);
 
-                    // If we are at least at 50% on the tile, we can dig it
-                        if(m_intersection.width >= (characterRect.width/2))
+                    // If we are at least at 50% on the tile, we can dig it and we can dig it, set m_impact to diggable
+                        if(m_intersection.width >= (characterRect.width/2) && m_result2 && m_hardness <= digPower)
                         {
                             blockPos.x = m_tileRect.left;
                             blockPos.y = m_tileRect.top;
 
                             return Collisions::Diggable;
+                        }
+
+                    // If we are at least at 50% on the tile, but we can't dig it
+                        else if(m_intersection.width >= (characterRect.width/2))
+                        {
+                            blockPos.x = m_tileRect.left;
+                            blockPos.y = m_tileRect.top;
                         }
                 }
         }

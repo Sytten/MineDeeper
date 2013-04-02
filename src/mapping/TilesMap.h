@@ -33,6 +33,7 @@ class TilesMap
             bool walkable;
             bool diggable;
             bool ore;
+            int hardness;
             bool door;
             bool building;
                 unsigned buildingID;
@@ -48,6 +49,7 @@ class TilesMap
         sf::Vector2i getTileSize() const { return m_tileSize; }
         void setTile(int x, int y, int blockID);
         int getTile(int x, int y);
+        int findLastAirBlockY();
 
     private:
         void loadTileSet();

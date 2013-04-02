@@ -49,10 +49,11 @@ class Game
             void pausedLoop(sf::Event& currentEvent);
             void enterBuilding();
             void gameOver();
+            void win();
 
         // Game states
             enum GameState { Uninitialized, Paused, ShowingMenu, Playing, Exiting };
-                GameState m_gameState;
+            GameState m_gameState;
 
         // Main window
             sf::RenderWindow m_mainWindow;
@@ -75,6 +76,7 @@ class Game
             sf::Text m_text;
             sf::Font m_eastwoodFont;
             std::unique_ptr<Filter> m_gameOverfilter;
+            std::unique_ptr<Filter> m_winFilter;
             sf::RectangleShape m_pausedFilter;
 
     // Draw can now access all the private variables of the class

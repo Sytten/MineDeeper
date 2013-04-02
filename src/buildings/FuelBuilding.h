@@ -48,7 +48,7 @@ class FuelBuilding : public Building
             void exitButton() { m_wantToExit = true; }
 
         // Some variables
-            const int m_fuelPrice;
+            const float m_fuelPrice;
             bool m_wantToExit;
             Character *m_ptrCharacter;
 

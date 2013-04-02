@@ -17,13 +17,18 @@
 
 using namespace std;
 
-Character::Character() : m_characterRect(381, 700, 63, 50), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(3), m_digPower(0), m_protection(0)
+Character::Character(int lastAirBlockY) : m_characterRect(381, 700, 63, 50), m_lastAirBlockY(lastAirBlockY), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(2.5), m_digPower(0), m_protection(0)
 {
     // Load the character`s texture
         if(!m_characterTexture.loadFromFile("data/vehicule.png"))
             throw ImageException("vehicule.png"); // If it fails, throw an error
 
     m_characterSprite.setTexture(m_characterTexture);
+
+    m_altitudeFont.loadFromFile("data/ariblk.ttf");
+    m_altitude.setColor(sf::Color::White);
+    m_altitude.setFont(m_altitudeFont);
+    m_altitude.setCharacterSize(20);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,4 +93,22 @@ float Character::getProperty( Property property )
         return m_fuel.m_maxFuel;
 
     return -1;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Character::verifyAltitude(sf::Vector2i tileSize)
+{
+    m_altitudeString.clear();
+
+    m_altitudeString += "Altitude : ";
+    m_converter << (int)(((m_characterRect.top + m_characterRect.height)/tileSize.y - m_lastAirBlockY)*-5);
+    m_altitudeString += m_converter.str();
+    m_altitudeString += "ft";
+
+    m_altitude.setString(m_altitudeString);
+    m_altitude.setPosition(10, 130);
+
+    m_converter.clear();
+    m_converter.str(std::string());
 }

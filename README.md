@@ -1,3 +1,9 @@
+!Important message!
+-------------------
+For the people who already have download the game:
+The version of SFGUI has been updated so you need to redownload the dll (there`s a package with only this dll and the game)
+in order to run the game properly.
+
 MineDeeper
 ==========
 

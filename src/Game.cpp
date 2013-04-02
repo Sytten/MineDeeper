@@ -27,8 +27,8 @@ void Game::gameLoop()
         return;
 
 // Create the window
-    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.0", sf::Style::Close); //Create a window
-        m_mainWindow.setFramerateLimit(60); //Limit the framerate, temporary!!!
+    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.2", sf::Style::Close); //Create a window
+        m_mainWindow.setFramerateLimit(60); //Limit the framerate
 
 // Create event and clock handler
     sf::Event currentEvent;
@@ -107,7 +107,7 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
 {
 // Create games objects
     m_tilesMap.reset( new TilesMap(75, 75) );
-    m_character.reset( new Character );
+    m_character.reset( new Character(m_tilesMap->findLastAirBlockY()) );
     m_characterMover.reset( new KeyboardCharacterMover );
     m_collisions.reset( new Collisions );
     m_camera.reset( new Camera(m_windowSize.x, m_windowSize.y) );
@@ -117,7 +117,9 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
         m_buildings.push_back( std::unique_ptr<Building>(new SellBuilding(m_windowSize, 2)) );
         m_buildings.push_back( std::unique_ptr<Building>(new UpgradeBuilding(m_windowSize, 3)) );
     m_gameOverfilter.reset( new Filter(sf::Color::Black, 1.f, sf::Rect<float>(0, 0, m_windowSize.x, m_windowSize.y) , true, 0.02f) );
+    m_winFilter.reset( new Filter(sf::Color::White, 1.f, sf::Rect<float>(0, 0, m_windowSize.x, m_windowSize.y) , true, 0.02f) );
     sf::Clock fuelClock;
+    sf::Time fuelTime; // In seconds
 
 // Set the properties of different objects
     m_pausedFilter.setFillColor(sf::Color(0, 0, 0, 100));
@@ -247,12 +249,23 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
                     }
             }
         // Move the character
-            m_characterMover->move(m_mainWindow, *(m_character), *(m_collisions), *(m_tilesMap), *(m_camera), *(m_background), clock.restart());
+            m_characterMover->move(m_mainWindow, *(m_character), *(m_collisions), *(m_tilesMap), *(m_camera), *(m_background), clock.getElapsedTime());
+                clock.restart();
 
-        // Remove fuel each 10 seconds
-        if(fuelClock.getElapsedTime().asSeconds() > 6)
+        // Remove fuel each 0,6 seconds
+        if(fuelClock.getElapsedTime().asSeconds() >= 0.6f)
         {
             m_character->getFuel().removeFuel(1);
+
+            fuelTime = fuelClock.getElapsedTime();
+            fuelTime -= sf::seconds(0.6f);
+
+            while (fuelTime.asSeconds() >= 0.6f)
+            {
+                m_character->getFuel().removeFuel(1);
+                fuelTime -= sf::seconds(0.6f);
+            }
+
             fuelClock.restart();
         }
 
@@ -265,7 +278,7 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
 
         // Check if the player have found all the artifacts
             if(m_character->getArtifacts().allFound())
-                m_gameState = Game::ShowingMenu;
+                win();
 
         // Display all the objects
         if(m_gameState == Game::Playing)
@@ -345,6 +358,29 @@ void Game::gameOver()
     {
         m_gameOverfilter->runFilter();
         m_mainWindow.draw(m_gameOverfilter->getFilter());
+        m_mainWindow.draw(m_text);
+        m_mainWindow.display();
+        // !!!Important!!! We don't clear the screen, so the filter is applied on the last one!
+    }
+
+// Change the gameState to return to the menu
+    m_gameState = Game::ShowingMenu;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Game::win()
+{
+// Set the properties
+    m_text.setString("Win! Nice Job!");
+        m_text.setColor(sf::Color::Red);
+        m_text.setPosition((m_windowSize.x/2) - (m_text.getLocalBounds().width/2), (m_windowSize.y/2) - (m_text.getLocalBounds().height/2));
+
+// While the alpha is less than 90
+    while(m_winFilter->getAlpha() < 90)
+    {
+        m_winFilter->runFilter();
+        m_mainWindow.draw(m_winFilter->getFilter());
         m_mainWindow.draw(m_text);
         m_mainWindow.display();
         // !!!Important!!! We don't clear the screen, so the filter is applied on the last one!

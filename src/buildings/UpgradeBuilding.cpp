@@ -15,6 +15,8 @@
 #include "UpgradeBuilding.h"
 #include "../character/Character.h"
 
+#include <iostream>
+
 using namespace std;
 
 UpgradeBuilding::UpgradeBuilding(sf::Vector2f const& windowSize, unsigned const& ID) : Building(ID), m_lifePrice(0.5f)
@@ -305,10 +307,10 @@ void UpgradeBuilding::moneyButtonClick( int life )
         life = m_ptrCharacter->getLife().lifeNeededToBeFull(); // If we can't, put the max
 
 // Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( life * m_lifePrice ))
+    if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(life * m_lifePrice) ))
     {
         // If yes, remove the money and add the life
-            m_ptrCharacter->getMoney().removeMoney( life * m_lifePrice );
+            m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
             m_ptrCharacter->getLife().addLife( life );
     }
 
@@ -317,7 +319,7 @@ void UpgradeBuilding::moneyButtonClick( int life )
         // Reduce by one the number of liter and check if the player can afford it
             for(int i(life); i > 0; i--)
             {
-                if(m_ptrCharacter->getMoney().enoughMoney( i * m_lifePrice ))
+                if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(i * m_lifePrice) ))
                 {
                     life = i;
                     break;
@@ -326,7 +328,7 @@ void UpgradeBuilding::moneyButtonClick( int life )
         // If we found a number greater than 0, remove the money and add the life
             if(life > 0)
             {
-                m_ptrCharacter->getMoney().removeMoney( life * m_lifePrice );
+                m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
                 m_ptrCharacter->getLife().addLife( life );
             }
     }
@@ -358,7 +360,7 @@ void UpgradeBuilding::fullButtonClick()
         // Reduce by one the number of liter and check if the player can afford it
             for(int i(life); i > 0; i--)
             {
-                if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(life * m_lifePrice) ))
+                if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(i * m_lifePrice) ))
                 {
                     life = i;
                     break;
@@ -368,6 +370,9 @@ void UpgradeBuilding::fullButtonClick()
             if(life > 0)
             {
                 m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
+                std::cout << life << endl;
+                std::cout << m_lifePrice << endl;
+                std::cout << (unsigned)(life * m_lifePrice) << std::endl;
                 m_ptrCharacter->getLife().addLife( life );
             }
     }
@@ -409,4 +414,7 @@ void UpgradeBuilding::upgradeButtonClick()
             }
         }
     }
+
+    verifyButtonsState();
+    setMoneyLabel();
 }

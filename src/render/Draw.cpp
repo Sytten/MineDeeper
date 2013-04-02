@@ -20,7 +20,7 @@ void draw(sf::RenderWindow &window, Game &game)
     // Each time we draw the background, the map and the character
         draw(window, *(game.m_background));
         draw(window, *(game.m_tilesMap), *(game.m_camera));
-        draw(window, *(game.m_character), game.m_camera->getPosition());
+        draw(window, *(game.m_character), game.m_camera->getPosition(), game.m_tilesMap->getTileSize());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos)
+void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos, sf::Vector2i tileSize)
 {
     // Set the position on the screen
         character.setCharacterPosition(character.getCharacterRect().left - cameraPos.x, character.getCharacterRect().top - cameraPos.y);
@@ -60,6 +60,10 @@ void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos
         window.draw(character.getLife().getShapeLifeBarSprite());
         window.draw(character.getFuel().getFullFuelBarSprite());
         window.draw(character.getFuel().getShapeFuelBarSprite());
+
+    // Draw the altitude
+        character.verifyAltitude(tileSize);
+        window.draw(character.getAltitude());
 
     // Draw the character
         window.draw(character.getCharacterSprite());

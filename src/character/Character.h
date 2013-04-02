@@ -30,12 +30,13 @@ class TilesMap;
 class Character
 {
     public:
-        Character();
+        Character(int lastAirBlockY);
 
         // Setters of different variables
             void setCharacterTexture(std::string textureName);
             void setCharacterPosition(float x, float y);
             void setProperty( Property property, float newValue );
+            void verifyAltitude(sf::Vector2i tileSize);
 
         // Getters of different variables
             Money& getMoney() { return m_money; }
@@ -45,13 +46,20 @@ class Character
             ResourcesInventory& getResourcesInventory() { return m_ressourcesInventory; }
             sf::Sprite const& getCharacterSprite() const { return m_characterSprite; }
             sf::Rect<float> const& getCharacterRect() const { return m_characterRect; }
-            float getvelocity() { return m_velocityY; }
+            float getvelocity() const { return m_velocityY; }
             float getProperty( Property property );
+            sf::Text const& getAltitude() const{ return m_altitude; }
 
     private:
+        std::stringstream m_converter;
+
         sf::Texture m_characterTexture;
         sf::Sprite m_characterSprite;
         sf::Rect<float> m_characterRect;
+        sf::Text m_altitude;
+            std::string m_altitudeString;
+            sf::Font m_altitudeFont;
+            int m_lastAirBlockY;
 
         float m_velocityX;
         float m_velocityY;

@@ -115,7 +115,7 @@ void TilesMap::loadTileSet()
                                 }
 
                             // If we don't have enough words, stop the game
-                                if(words.size() < 8)
+                                if(words.size() < 9)
                                     throw TileException(numTile);
 
                             // Set the properties of the tile
@@ -134,29 +134,34 @@ void TilesMap::loadTileSet()
                                 else
                                     tile.ore = true;
 
-                                if(words.at(3) == "false")
+                                convert.str( words.at(3) );
+                                convert >> tile.hardness;
+                                convert.str(string());
+                                convert.clear();
+
+                                if(words.at(4) == "false")
                                     tile.door = false;
                                 else
                                     tile.door = true;
 
-                                if(words.at(4) == "false")
+                                if(words.at(5) == "false")
                                     tile.artifact = false;
                                 else
                                     tile.artifact = true;
 
-                                if(words.at(5) == "false")
+                                if(words.at(6) == "false")
                                     tile.building = false;
                                 else
                                     tile.building = true;
 
-                                convert.str( words.at(6) );
+                                convert.str( words.at(7) );
                                 convert >> tile.buildingID;
                                 convert.str(string());
                                 convert.clear();
 
-                                tile.name = words.at(7);
+                                tile.name = words.at(8);
 
-                                convert.str( words.at(8) );
+                                convert.str( words.at(9) );
                                 convert >> tile.price;
                                 convert.str(string());
                                 convert.clear();
@@ -317,20 +322,23 @@ void TilesMap::loadLevel()
                         {
                             for(unsigned y(rowsDone); y < m_world[0].size(); ++y)
                             {
-                                randomNumber = rand()%surface;
+                                // Pick a number between 0 and the surface
+                                    randomNumber = rand()%surface;
 
                                 for(map<unsigned, unsigned>::iterator iter(lineNumbers.begin()); iter != lineNumbers.end(); ++iter)
                                 {
-                                    if(randomNumber < (iter->second + total))
-                                    {
-                                        m_world[x][y] = iter->first;
-                                        lineNumbers.at(iter->first)--;
-                                        --surface;
-                                        break;
-                                    }
+                                    // If the random number is less than the number of tile of that kind + total of the tiles we tested before
+                                        if(randomNumber < (iter->second + total))
+                                        {
+                                            m_world[x][y] = iter->first;
+                                            lineNumbers.at(iter->first)--;
+                                            --surface;
+                                            break;
+                                        }
 
-                                    else
-                                        total += iter->second;
+                                    // Else add the number to the total and check for the next kind of tile
+                                        else
+                                            total += iter->second;
                                 }
 
                                 total = 0;
@@ -338,8 +346,9 @@ void TilesMap::loadLevel()
                         }
                     }
 
-                rowsDone += rows;
-                ++lineError;
+                // Add the rows so we don't override what we have done
+                    rowsDone += rows;
+                    ++lineError;
 
                 line.clear();
                 rows = 0;
@@ -363,13 +372,7 @@ void TilesMap::loadLevel()
 
 // Find the last block in y that is equal to 0 (air)
     int lastAirBlockY(0);
-    for(int y = 0; y < (int)m_world[0].size(); ++y)
-    {
-        if(m_world[0][y] == 0)
-            ++lastAirBlockY;
-        else
-            break;
-    }
+     lastAirBlockY = findLastAirBlockY();
 
     if(lastAirBlockY != 0)
         --lastAirBlockY;
@@ -378,7 +381,7 @@ void TilesMap::loadLevel()
     {
         std::map<int, TileProp>::iterator first(m_tilesProps.end());
         std::map<int, TileProp>::iterator last(m_tilesProps.end());
-        unsigned space(5);
+        unsigned const space(5);
         unsigned x = space;
         unsigned counter(0);
         unsigned positionX(1);
@@ -388,7 +391,7 @@ void TilesMap::loadLevel()
             // If it's a building and we did not initialize the first iterator (it's the beginning of a building)
                 if(m_iter->second.building && first == m_tilesProps.end())
                     first = m_iter;
-            // If it's not the same buildingID (so not the same building), set the iterator last (it's one pas the end of the building)
+            // If it's not the same buildingID (so not the same building), set the iterator last (it's one past the end of the building)
                 if(m_iter->second.buildingID != first->second.buildingID && first != m_tilesProps.end())
                     last = m_iter;
             // If we have the beginning and the end of the building
@@ -432,6 +435,59 @@ void TilesMap::loadLevel()
         }
     }
 
+// Place the artifacts
+    {
+        unsigned counter(1);
+        map<int, int> pastPositions;
+        unsigned positionX(0);
+        unsigned positionY(0);
+        bool placed(false);
+        bool canBePlace(true);
+
+        for(m_iter = m_tilesProps.begin(); m_iter != m_tilesProps.end(); ++m_iter)
+        {
+            if(m_iter->second.artifact && counter <= 3)
+            {
+                while(!placed)
+                {
+                    positionX = rand()%m_world.size();
+                    positionY = rand()%(m_world[0].size() - (m_world[0].size() - 50)) + (m_world[0].size() - 50);
+
+                    if(m_world[positionX][positionY] == 1)
+                    {
+                        if(counter == 1)
+                        {
+                            m_world[positionX][positionY] = m_iter->first;
+                            placed = true;
+                            ++counter;
+                            pastPositions[positionX] = positionY;
+                        }
+
+                        else
+                        {
+                            canBePlace = true;
+
+                            for(map<int,int>::iterator iter(pastPositions.begin()); iter != pastPositions.end(); ++iter)
+                            {
+                                if((iter->first - positionX < 6 && iter->second - positionY < 10) || (positionX - iter->first < 6 && positionY - iter->second < 10))
+                                    canBePlace = false;
+                            }
+
+                            if(canBePlace)
+                            {
+                                m_world[positionX][positionY] = m_iter->first;
+                                placed = true;
+                                ++counter;
+                                pastPositions[positionX] = positionY;
+                            }
+                        }
+                    }
+                }
+                placed = false;
+            }
+        }
+    }
+
 // Define the vector world size
     m_worldSize.x = (int)m_world.size() * m_tileSize.x;
     m_worldSize.y = (int)m_world[0].size() * m_tileSize.y;
@@ -456,4 +512,21 @@ void TilesMap::setTile(int x, int y, int blockID)
 int TilesMap::getTile(int x, int y)
 {
     return m_world[x][y];
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+int TilesMap::findLastAirBlockY()
+{
+    int lastAirBlockY(0);
+
+    for(int y = 0; y < (int)m_world[0].size(); ++y)
+    {
+        if(m_world[0][y] == 0)
+            ++lastAirBlockY;
+        else
+            break;
+    }
+
+    return lastAirBlockY;
 }
