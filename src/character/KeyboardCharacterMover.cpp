@@ -9,7 +9,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 23/03/2013
+// Last modification date: 08/04/2013
 // ---------------------------------------------------------------------------
 
 #include "KeyboardCharacterMover.h"
@@ -20,7 +20,7 @@
 #include "../exceptions/ImageException.h"
 
 // Set all the directions to false
-KeyboardCharacterMover::KeyboardCharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false), m_result(Collisions::NoCollision), m_flying(true)
+KeyboardCharacterMover::KeyboardCharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false), m_result(Collisions::NoCollision), m_flying(true), m_lastFunction(100)
 {
 }
 
@@ -80,25 +80,25 @@ void KeyboardCharacterMover::checkStateOfKeys()
 {
 // Check direction if a key is pressed to go in that direction, if not: set it to false
     // Check north direction
-        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::W) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Up))
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
             m_north = true;
         else
             m_north = false;
 
     // Check south direction
-        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::S) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Down))
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
             m_south = true;
         else
             m_south = false;
 
     // Check east direction
-        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::D) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Right))
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
             m_east = true;
         else
             m_east = false;
 
     // Check west direction
-        if(m_keyboard.isKeyPressed(sf::Keyboard::Key::A) || m_keyboard.isKeyPressed(sf::Keyboard::Key::Left))
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
             m_west = true;
         else
             m_west = false;
@@ -125,6 +125,8 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
     m_result = collisions.collidedY(m_testRect, character.m_digPower, tilesMap, m_blockPos);
     if(m_result == Collisions::NoCollision)
         m_flying = true;
+    else
+        m_flying = false;
 
 // If a direction is true, add or delete 13 to the velocity (x or y) to be able to move in that direction
     if(m_north)
@@ -178,109 +180,176 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
         m_testRect.left += elapsedTime.asSeconds()* character.m_velocityX; // Add x movement
         m_result = collisions.collidedX(m_testRect, character.m_digPower, tilesMap, m_blockPos); // Test
 
-    // If there're no collision
-        if(m_result == Collisions::NoCollision)
-        {
-            character.m_characterRect.left = m_testRect.left; // Move the character position
-            camera.moveX(character.m_characterRect, tilesMap.getWorldSize()); // Move the camera position
-        }
-    // If we can dig
-        else if(m_result == Collisions::Diggable)
-        {
-            // Only dig if we are not flying and if the the key is pressed
-                if(m_blockPos.x < character.m_characterRect.left && m_west && !m_flying)
-                {
-                    dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::WEST);
-                    return;
-                }
-                if(m_blockPos.x > character.m_characterRect.left && m_east && !m_flying)
-                {
-                    dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::EAST);
-                    return;
-                }
-        }
-        else
-        {
-            character.m_velocityX = 0;
-        }
+        // If there're no collision
+            if(m_result == Collisions::NoCollision)
+            {
+                character.m_characterRect.left = m_testRect.left; // Move the character position
+                camera.moveX(character.m_characterRect, tilesMap.getWorldSize()); // Move the camera position
+            }
+        // If we can dig
+            else if(m_result == Collisions::Diggable)
+            {
+                // Only dig if we are not flying and if the the key is pressed
+                    if(m_blockPos.x < character.m_characterRect.left && m_west && !m_flying)
+                    {
+                        dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::WEST);
+                        return;
+                    }
+                    if(m_blockPos.x > character.m_characterRect.left && m_east && !m_flying)
+                    {
+                        dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::EAST);
+                        return;
+                    }
+            }
+            else
+            {
+                character.m_velocityX = 0;
+            }
 
-// Collisions in y axis
-    m_testRect.left = character.m_characterRect.left; // Because we don't care about the movement in x axis
-    m_testRect.top += elapsedTime.asSeconds()* character.m_velocityY; // Add y movement
-    m_result = collisions.collidedY(m_testRect, character.m_digPower, tilesMap, m_blockPos); // Test
+    // Collisions in y axis
+        m_testRect.left = character.m_characterRect.left; // Because we don't care about the movement in x axis
+        m_testRect.top += elapsedTime.asSeconds()* character.m_velocityY; // Add y movement
+        m_result = collisions.collidedY(m_testRect, character.m_digPower, tilesMap, m_blockPos); // Test
 
-    // If there's no collision
-        if(m_result == Collisions::NoCollision)
-        {
-            character.m_characterRect.top = m_testRect.top; // Move the character position
-            camera.moveY(character.m_characterRect, tilesMap.getWorldSize()); // Move the camera position
-        }
+        // If there's no collision
+            if(m_result == Collisions::NoCollision)
+            {
+                character.m_characterRect.top = m_testRect.top; // Move the character position
+                camera.moveY(character.m_characterRect, tilesMap.getWorldSize()); // Move the camera position
+            }
 
-    // If we can dig
-        else if(m_result == Collisions::Diggable)
-        {
-            // Only dig if the the key is pressed, the block is under the character and the velocity in Y isn't too high
-                if(m_blockPos.y > character.m_characterRect.top && m_south && character.m_velocityY <= 500)
-                {
-                    m_flying = false;
-                    dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::SOUTH);
-                }
+        // If we can dig
+            else if(m_result == Collisions::Diggable)
+            {
+                // Only dig if the the key is pressed, the block is under the character and the velocity in Y isn't too high
+                    if(m_blockPos.y > character.m_characterRect.top && m_south && character.m_velocityY <= 500)
+                    {
+                        m_flying = false;
+                        dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::SOUTH);
+                    }
 
-                else
-                {
-                    m_characterVelocityY = character.m_velocityY;
-                    //Check rebound in y axis
-                        if(m_physic.checkRebound(character.m_velocityY))
-                        {
-                            if(m_characterVelocityY <= 700)
-                                character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
+                    else
+                    {
+                        m_characterVelocityY = character.m_velocityY;
+                        //Check rebound in y axis
+                            if(m_physic.checkRebound(character.m_velocityY))
+                            {
+                                if(m_characterVelocityY <= 700)
+                                    character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
 
-                            if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
-                                character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
+                                if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
+                                    character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
 
-                            if(m_characterVelocityY > 1000)
-                                character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
-                        }
+                                if(m_characterVelocityY > 1000)
+                                    character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
+                            }
 
-                    //If there's no rebound
-                        else if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY > 0)
-                        {
-                            m_flying = false;
-                            character.m_velocityY = 0;
-                        }
-                }
-        }
+                        //If there's no rebound
+                            else if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY >= 0)
+                            {
+                                m_flying = false;
+                                character.m_velocityY = 0;
+                            }
+                    }
+            }
 
-    // If we collided but we can't dig
-        else if(m_result == Collisions::BlockCollision)
-        {
-            m_characterVelocityY = character.m_velocityY;
-            //Check rebound in y axis
-                if(m_physic.checkRebound(character.m_velocityY))
-                {
-                    if(m_characterVelocityY <= 700)
-                        character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
+        // If we collided but we can't dig
+            else if(m_result == Collisions::BlockCollision)
+            {
+                m_characterVelocityY = character.m_velocityY;
+                //Check rebound in y axis
+                    if(m_physic.checkRebound(character.m_velocityY))
+                    {
+                        if(m_characterVelocityY <= 700)
+                            character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
 
-                    if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
-                        character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
+                        if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
+                            character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
 
-                    if(m_characterVelocityY > 1000)
-                        character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
-                }
+                        if(m_characterVelocityY > 1000)
+                            character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
+                    }
 
-            //If there's no rebound
-                else if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY > 0)
-                {
-                    m_flying = false;
+                //If there's no rebound
+                    else if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY > 0)
+                    {
+                        m_flying = false;
+                        character.m_velocityY = 0;
+                    }
+            }
+
+            else
+            {
+                // Set the velocity to 0 if we hit
                     character.m_velocityY = 0;
-                }
-        }
+            }
 
+// Set the image of the character
+    if(character.m_velocityX > 0)
+    {
+        if(m_flying)
+            character.setCharacterTexture("flyRight.png");
         else
+            character.setCharacterTexture("vehiculeRight.png");
+
+        if(!ServiceLocator::GetAudio()->isSoundPlaying("normal.ogg") && !m_flying)
         {
-            // Set the velocity to 0 if we hit
-                character.m_velocityY = 0;
+            ServiceLocator::GetAudio()->stopSounds();
+            ServiceLocator::GetAudio()->playSound("normal.ogg", 60, true);
         }
+        else if(!ServiceLocator::GetAudio()->isSoundPlaying("fly.ogg") && m_flying)
+        {
+            ServiceLocator::GetAudio()->stopSounds();
+            ServiceLocator::GetAudio()->playSound("fly.ogg", 60, true);
+        }
+    }
+
+    else if(character.m_velocityX < 0)
+    {
+        if(m_flying)
+            character.setCharacterTexture("flyLeft.png");
+        else
+            character.setCharacterTexture("vehiculeLeft.png");
+
+        if(!ServiceLocator::GetAudio()->isSoundPlaying("normal.ogg") && !m_flying)
+        {
+            ServiceLocator::GetAudio()->stopSounds();
+            ServiceLocator::GetAudio()->playSound("normal.ogg", 60, true);
+        }
+        else if(!ServiceLocator::GetAudio()->isSoundPlaying("fly.ogg") && m_flying)
+        {
+            ServiceLocator::GetAudio()->stopSounds();
+            ServiceLocator::GetAudio()->playSound("fly.ogg", 60, true);
+        }
+    }
+
+    else if(character.m_velocityX == 0 && m_flying)
+    {
+        if(character.m_characterTextureName == "vehiculeLeft.png")
+            character.setCharacterTexture("flyLeft.png");
+        else if(character.m_characterTextureName == "vehiculeRight.png")
+            character.setCharacterTexture("flyRight.png");
+
+        if(!ServiceLocator::GetAudio()->isSoundPlaying("fly.ogg"))
+        {
+            ServiceLocator::GetAudio()->stopSounds();
+            ServiceLocator::GetAudio()->playSound("fly.ogg", 60, true);
+        }
+    }
+
+    else if(character.m_velocityX == 0 && !m_flying)
+    {
+        if(character.m_characterTextureName == "flyLeft.png")
+            character.setCharacterTexture("vehiculeLeft.png");
+        else if(character.m_characterTextureName == "flyRight.png")
+            character.setCharacterTexture("vehiculeRight.png");
+
+        if(!ServiceLocator::GetAudio()->isSoundPlaying("normal.ogg"))
+        {
+            ServiceLocator::GetAudio()->stopSounds();
+            ServiceLocator::GetAudio()->playSound("normal.ogg", 60, true);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,14 +358,18 @@ void KeyboardCharacterMover::dig(sf::RenderWindow &window, Character &character,
 {
 bool finished(false);
 
+// Change the sounds
+    ServiceLocator::GetAudio()->stopSounds();
+    ServiceLocator::GetAudio()->playSound("drill.ogg", 60, true);
+
 // Change character texture to dig
     if(digDirection == KeyboardCharacterMover::SOUTH)
-        character.setCharacterTexture("digdown.png");
+        character.setCharacterTexture("digDown.png");
 
-    if(digDirection == KeyboardCharacterMover::WEST)
+    else if(digDirection == KeyboardCharacterMover::WEST)
         character.setCharacterTexture("digLeft.png");
 
-    if(digDirection == KeyboardCharacterMover::EAST)
+    else if(digDirection == KeyboardCharacterMover::EAST)
         character.setCharacterTexture("digRight.png");
 
 // Find the target pos
@@ -343,11 +416,7 @@ while(!finished)
         window.clear();
         draw(window, background);
         draw(window, tilesMap, camera);
-            if(digDirection == KeyboardCharacterMover::WEST)
-                character.m_characterRect.left -= 25;//remove a x px to the x of the because of the drill, we just want to remove those when draw but not when calculating
         draw(window, character, camera.getPosition(), tilesMap.getTileSize());
-            if(digDirection == KeyboardCharacterMover::WEST)
-                character.m_characterRect.left += 25;//add a x px to the x of the because of the drill
         window.display();
 
     // Check if we reach the target
@@ -367,7 +436,15 @@ while(!finished)
     tilesMap.setTile((blockPos.x/tilesMap.getTileSize().x), (blockPos.y/tilesMap.getTileSize().y), 2);
 
 // Change character texture back to normal
-    character.setCharacterTexture("vehicule.png");
+    if(digDirection == KeyboardCharacterMover::EAST)
+        character.setCharacterTexture("vehiculeRight.png");
+
+    else
+        character.setCharacterTexture("vehiculeLeft.png");
+
+// Change the sounds
+    ServiceLocator::GetAudio()->stopSounds();
+    ServiceLocator::GetAudio()->playSound("normal.ogg", 60, true);
 
 // Remove all the directions, so the player won't move
     character.m_velocityY = 0;

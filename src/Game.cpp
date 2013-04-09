@@ -8,7 +8,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 23/03/2013
+// Last modification date: 08/04/2013
 // ---------------------------------------------------------------------------
 
 #include "Game.h"
@@ -27,8 +27,12 @@ void Game::gameLoop()
         return;
 
 // Create the window
-    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.2", sf::Style::Close); //Create a window
+    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.3", sf::Style::Close); //Create a window
         m_mainWindow.setFramerateLimit(60); //Limit the framerate
+
+// Create and set the audio service
+    SFMLAudioProvider audioProvider;
+    ServiceLocator::RegisterServiceLocator(&audioProvider);
 
 // Create event and clock handler
     sf::Event currentEvent;
@@ -129,6 +133,8 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
         m_text.setFont(m_eastwoodFont);
         m_text.setCharacterSize(70);
 
+// Start song
+    ServiceLocator::GetAudio()->playSong("continuity.ogg", 100, true);
 
 // Do until we want to exit the game
     while (m_gameState == Game::Playing)
@@ -195,7 +201,7 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
                                             m_characterMover->checkStateOfKeys();
                                             break;
 
-                                    // If enter pressed, check if the player can enter in a building
+                                    // If enter is pressed, check if the player can enter in a building
                                         case sf::Keyboard::Return:
                                             enterBuilding();
                                                 clock.restart();
@@ -294,6 +300,9 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
 
 void Game::pausedLoop(sf::Event& currentEvent)
 {
+// Stop sounds
+    ServiceLocator::GetAudio()->stopSounds();
+
 // Set the properties
     m_text.setString("Paused!");
         m_text.setColor(sf::Color::White);
@@ -329,6 +338,9 @@ void Game::pausedLoop(sf::Event& currentEvent)
 
 void Game::enterBuilding()
 {
+// Stop sounds
+    ServiceLocator::GetAudio()->stopSounds();
+
 // Check if the player collided with a building (and a door), it return the ID of the building (or 0 if we don`t collided)
     unsigned buildingID = m_collisions->collidedBuilding(m_character->getCharacterRect(), (*m_tilesMap));
 
@@ -348,6 +360,10 @@ void Game::enterBuilding()
 
 void Game::gameOver()
 {
+// Stop sounds
+    ServiceLocator::GetAudio()->stopSounds();
+    ServiceLocator::GetAudio()->stopSong();
+
 // Set the properties
     m_text.setString("Game Over!");
         m_text.setColor(sf::Color::Red);
@@ -371,8 +387,12 @@ void Game::gameOver()
 
 void Game::win()
 {
+// Stop sounds
+    ServiceLocator::GetAudio()->stopSounds();
+    ServiceLocator::GetAudio()->stopSong();
+
 // Set the properties
-    m_text.setString("Win! Nice Job!");
+    m_text.setString("Win! Nice Job!\nGame by Sytten and Vantuan\nMusic by The Algorithm");
         m_text.setColor(sf::Color::Red);
         m_text.setPosition((m_windowSize.x/2) - (m_text.getLocalBounds().width/2), (m_windowSize.y/2) - (m_text.getLocalBounds().height/2));
 

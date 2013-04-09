@@ -15,8 +15,6 @@
 #include "UpgradeBuilding.h"
 #include "../character/Character.h"
 
-#include <iostream>
-
 using namespace std;
 
 UpgradeBuilding::UpgradeBuilding(sf::Vector2f const& windowSize, unsigned const& ID) : Building(ID), m_lifePrice(0.5f)
@@ -242,12 +240,26 @@ bool UpgradeBuilding::enter(sfg::SFGUI& sfgui, sf::RenderWindow& window, Charact
                 m_window->HandleEvent( event );
 
 			// Close window, return false to close the app properly
-                if ( event.type == sf::Event::Closed )
-                    return false;
+                if( event.type == sf::Event::Closed )
+                {
+                    // Set the member pointer to null to avoid memory leaks
+                        m_ptrCharacter = nullptr;
+
+                    // Don't show the gui window
+                        m_window->Show(false);
+                        return false;
+                }
+
+                if( event.type == sf::Event::KeyPressed )
+                {
+                    if(event.key.code ==  sf::Keyboard::Escape)
+                        m_wantToExit = true;
+                }
 		}
 
 		// Update the GUI
             m_window->Update( clock.restart().asSeconds() );
+
 
 		// Draw the GUI, but don't clear the screen!
             sfgui.Display( window );
@@ -370,9 +382,6 @@ void UpgradeBuilding::fullButtonClick()
             if(life > 0)
             {
                 m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
-                std::cout << life << endl;
-                std::cout << m_lifePrice << endl;
-                std::cout << (unsigned)(life * m_lifePrice) << std::endl;
                 m_ptrCharacter->getLife().addLife( life );
             }
     }

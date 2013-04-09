@@ -33,6 +33,8 @@
 #include "buildings/SellBuilding.h"
 #include "buildings/UpgradeBuilding.h"
 #include "mechanics/Collisions.h"
+#include "sound/SFMLAudioProvider.h"
+#include "ServiceLocator.h"
 
 class Game
 {

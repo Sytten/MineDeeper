@@ -37,6 +37,7 @@ class Character
             void setCharacterPosition(float x, float y);
             void setProperty( Property property, float newValue );
             void verifyAltitude(sf::Vector2i tileSize);
+            void verifyOffset();
 
         // Getters of different variables
             Money& getMoney() { return m_money; }
@@ -47,15 +48,18 @@ class Character
             sf::Sprite const& getCharacterSprite() const { return m_characterSprite; }
             sf::Rect<float> const& getCharacterRect() const { return m_characterRect; }
             float getvelocity() const { return m_velocityY; }
-            float getProperty( Property property );
-            sf::Text const& getAltitude() const{ return m_altitude; }
+            float getProperty( Property property ) const;
+            sf::Text const& getAltitude() const { return m_altitude; }
+            sf::Vector2f const& getOffset() const { return m_drawOffset; }
 
     private:
         std::stringstream m_converter;
 
         sf::Texture m_characterTexture;
+            sf::String m_characterTextureName;
         sf::Sprite m_characterSprite;
         sf::Rect<float> m_characterRect;
+        sf::Vector2f m_drawOffset;
         sf::Text m_altitude;
             std::string m_altitudeString;
             sf::Font m_altitudeFont;

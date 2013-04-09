@@ -53,7 +53,8 @@ void draw(sf::RenderWindow &window, TilesMap &tilesMap, const Camera &camera)
 void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos, sf::Vector2i tileSize)
 {
     // Set the position on the screen
-        character.setCharacterPosition(character.getCharacterRect().left - cameraPos.x, character.getCharacterRect().top - cameraPos.y);
+        character.verifyOffset();
+        character.setCharacterPosition(character.getCharacterRect().left - cameraPos.x + character.getOffset().x, character.getCharacterRect().top - cameraPos.y + character.getOffset().y);
 
     // Draw the life and the fuel bars
         window.draw(character.getLife().getFullLifeBarSprite());

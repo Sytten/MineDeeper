@@ -17,11 +17,16 @@
 
 using namespace std;
 
-Character::Character(int lastAirBlockY) : m_characterRect(381, 700, 63, 50), m_lastAirBlockY(lastAirBlockY), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(2.5), m_digPower(0), m_protection(0)
+Character::Character(int lastAirBlockY) : m_characterRect(381, 700, 63, 50), m_drawOffset(0, 0), m_lastAirBlockY(lastAirBlockY), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(2.5), m_digPower(0), m_protection(0)
 {
     // Load the character`s texture
-        if(!m_characterTexture.loadFromFile("data/vehicule.png"))
-            throw ImageException("vehicule.png"); // If it fails, throw an error
+        if(!m_characterTexture.loadFromFile("data/vehiculeLeft.png"))
+            throw ImageException("vehiculeLeft.png"); // If it fails, throw an error
+
+    m_characterTextureName = "vehiculeLeft.png";
+
+    m_characterRect.height = m_characterTexture.getSize().y;
+    m_characterRect.width = m_characterTexture.getSize().x;
 
     m_characterSprite.setTexture(m_characterTexture);
 
@@ -40,6 +45,8 @@ void Character::setCharacterTexture(string textureName)
             directory += textureName;
         if(!m_characterTexture.loadFromFile(directory))
             throw ImageException(textureName); // If it fails, throw an error
+
+        m_characterTextureName = textureName;
 
     // Set the character's texture and adjust the view
         m_characterSprite.setTexture(m_characterTexture);
@@ -75,7 +82,7 @@ void Character::setProperty( Property property, float newValue )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float Character::getProperty( Property property )
+float Character::getProperty( Property property ) const
 {
     if(property == Property::Engine)
         return m_digSpeed;
@@ -111,4 +118,27 @@ void Character::verifyAltitude(sf::Vector2i tileSize)
 
     m_converter.clear();
     m_converter.str(std::string());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Character::verifyOffset()
+{
+    if(m_characterTextureName == "digLeft.png")
+    {
+        m_drawOffset.x = (m_characterTexture.getSize().x - m_characterRect.width) * -1;
+        m_drawOffset.y = 0;
+    }
+
+    else if(m_characterTextureName == "flyLeft.png" || m_characterTextureName == "flyRight.png")
+    {
+        m_drawOffset.x = 0;
+        m_drawOffset.y = (m_characterTexture.getSize().y - m_characterRect.height) * -1;
+    }
+
+    else
+    {
+        m_drawOffset.x = 0;
+        m_drawOffset.y = 0;
+    }
 }

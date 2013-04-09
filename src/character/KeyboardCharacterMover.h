@@ -9,7 +9,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 26/01/2013
+// Last modification date: 05/04/2013
 // ---------------------------------------------------------------------------
 
 #ifndef KEYBOARDCHARACTERMOVER_H
@@ -19,6 +19,7 @@
 
 #include "../mechanics/Collisions.h"
 #include "../mechanics/Physic.h"
+#include "../ServiceLocator.h"
 
 class Character;
 class TilesMap;
@@ -61,7 +62,8 @@ class KeyboardCharacterMover
             bool m_flying;
             float m_characterVelocityY; // Temp value
 
-        // Variable needed by the function checkStateOfKeys
-            sf::Keyboard m_keyboard;
+        // Clock for the sound
+            sf::Clock m_soundClock;
+            int m_lastFunction;
 };
 #endif

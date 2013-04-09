@@ -189,8 +189,24 @@ bool SellBuilding::enter(sfg::SFGUI &sfgui, sf::RenderWindow &window, Character 
                 m_window->HandleEvent( event );
 
 			// Close window, return false to close the app properly
-                if ( event.type == sf::Event::Closed )
+                if( event.type == sf::Event::Closed )
+                {
+                    // Reset the pointer to null
+                        m_ptrCharacter = nullptr;
+
+                    // Delete the objects in the frame
+                        m_mainFrame->RemoveAll();
+
+                    // Don't show the gui window
+                        m_window->Show(false);
                     return false;
+                }
+
+                if( event.type == sf::Event::KeyPressed )
+                {
+                    if(event.key.code ==  sf::Keyboard::Escape)
+                        m_wantToExit = true;
+                }
 		}
 
 		// Update the GUI

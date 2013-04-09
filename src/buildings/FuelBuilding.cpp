@@ -157,8 +157,21 @@ bool FuelBuilding::enter(sfg::SFGUI& sfgui, sf::RenderWindow& window, Character 
                 m_window->HandleEvent( event );
 
 			// Close window, return false to close the app properly
-                if ( event.type == sf::Event::Closed )
+                if( event.type == sf::Event::Closed )
+                {
+                    // Set the member pointer to null to avoid memory leaks
+                        m_ptrCharacter = nullptr;
+
+                    // Don't show the gui window
+                        m_window->Show(false);
                     return false;
+                }
+
+                if( event.type == sf::Event::KeyPressed )
+                {
+                    if(event.key.code ==  sf::Keyboard::Escape)
+                        m_wantToExit = true;
+                }
 		}
 
 		// Update the GUI
@@ -190,10 +203,17 @@ void FuelBuilding::moneyButtonClick(int liters)
         liters = m_ptrCharacter->getFuel().fuelNeededToBeFull(); // If we can't, put the max
 
 // Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( (liters * m_fuelPrice) ))
+    if(m_ptrCharacter->getMoney().enoughMoney( unsigned(liters * m_fuelPrice) ) && unsigned(liters * m_fuelPrice) != 0)
     {
         // If yes, remove the money and add the fuel
-            m_ptrCharacter->getMoney().removeMoney( (liters * m_fuelPrice) );
+            m_ptrCharacter->getMoney().removeMoney( unsigned(liters * m_fuelPrice) );
+            m_ptrCharacter->getFuel().addFuel(liters);
+    }
+
+    else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(liters * m_fuelPrice) == 0)
+    {
+        // Remove the money and add the fuel
+            m_ptrCharacter->getMoney().removeMoney(1);
             m_ptrCharacter->getFuel().addFuel(liters);
     }
 
@@ -202,17 +222,21 @@ void FuelBuilding::moneyButtonClick(int liters)
         // Reduce by one the number of liter and check if the player can afford it
             for(int i(liters); i > 0; i--)
             {
-                if(m_ptrCharacter->getMoney().enoughMoney( (i * m_fuelPrice) ))
+                if(m_ptrCharacter->getMoney().enoughMoney( unsigned(i * m_fuelPrice) ) && unsigned(i * m_fuelPrice) != 0)
                 {
-                    liters = i;
+                    // Remove the money and add the fuel
+                        m_ptrCharacter->getMoney().removeMoney( unsigned(i * m_fuelPrice) );
+                        m_ptrCharacter->getFuel().addFuel(i);
                     break;
                 }
-            }
-        // If we found a number greater than 0, remove the money and add the fuel
-            if(liters > 0)
-            {
-                m_ptrCharacter->getMoney().removeMoney( (liters * m_fuelPrice) );
-                m_ptrCharacter->getFuel().addFuel(liters);
+
+                if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(i * m_fuelPrice) == 0)
+                {
+                    // Remove the money and add the fuel
+                        m_ptrCharacter->getMoney().removeMoney(1);
+                        m_ptrCharacter->getFuel().addFuel(i);
+                    break;
+                }
             }
     }
 
@@ -231,10 +255,17 @@ void FuelBuilding::fullButtonClick()
     int liters = m_ptrCharacter->getFuel().fuelNeededToBeFull();
 
 // Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( (liters * m_fuelPrice) ))
+    if(m_ptrCharacter->getMoney().enoughMoney( unsigned(liters * m_fuelPrice) ))
     {
         // If yes, remove the money and add the fuel
-            m_ptrCharacter->getMoney().removeMoney( (liters * m_fuelPrice) );
+            m_ptrCharacter->getMoney().removeMoney( unsigned(liters * m_fuelPrice) );
+            m_ptrCharacter->getFuel().addFuel(liters);
+    }
+
+    else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(liters * m_fuelPrice) == 0)
+    {
+        // Remove the money and add the fuel
+            m_ptrCharacter->getMoney().removeMoney(1);
             m_ptrCharacter->getFuel().addFuel(liters);
     }
 
@@ -243,17 +274,21 @@ void FuelBuilding::fullButtonClick()
         // Reduce by one the number of liter and check if the player can afford it
             for(int i(liters); i > 0; i--)
             {
-                if(m_ptrCharacter->getMoney().enoughMoney( (i * m_fuelPrice) ))
+                if(m_ptrCharacter->getMoney().enoughMoney( unsigned(i * m_fuelPrice) ) && unsigned(i * m_fuelPrice) != 0)
                 {
-                    liters = i;
+                    // Remove the money and add the fuel
+                        m_ptrCharacter->getMoney().removeMoney( unsigned(i * m_fuelPrice) );
+                        m_ptrCharacter->getFuel().addFuel(i);
                     break;
                 }
-            }
-        // If we found a number greater than 0, remove the money and add the fuel
-            if(liters > 0)
-            {
-                m_ptrCharacter->getMoney().removeMoney( (liters * m_fuelPrice) );
-                m_ptrCharacter->getFuel().addFuel(liters);
+
+                if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(i * m_fuelPrice) == 0)
+                {
+                    // Remove the money and add the fuel
+                        m_ptrCharacter->getMoney().removeMoney(1);
+                        m_ptrCharacter->getFuel().addFuel(i);
+                    break;
+                }
             }
     }
 
