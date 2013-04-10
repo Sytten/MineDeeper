@@ -21,6 +21,8 @@ void draw(sf::RenderWindow &window, Game &game)
         draw(window, *(game.m_background));
         draw(window, *(game.m_tilesMap), *(game.m_camera));
         draw(window, *(game.m_character), game.m_camera->getPosition(), game.m_tilesMap->getTileSize());
+
+    //
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +57,13 @@ void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos
     // Set the position on the screen
         character.verifyOffset();
         character.setCharacterPosition(character.getCharacterRect().left - cameraPos.x + character.getOffset().x, character.getCharacterRect().top - cameraPos.y + character.getOffset().y);
+
+    // Run the filter to make changes and draw it if active
+        if(character.getDamagesFilter().isActive())
+        {
+            character.getDamagesFilter().runFilter();
+            window.draw(character.getDamagesFilter().getFilter());
+        }
 
     // Draw the life and the fuel bars
         window.draw(character.getLife().getFullLifeBarSprite());

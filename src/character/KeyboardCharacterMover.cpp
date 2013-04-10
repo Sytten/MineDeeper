@@ -9,7 +9,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 08/04/2013
+// Last modification date: 09/04/2013
 // ---------------------------------------------------------------------------
 
 #include "KeyboardCharacterMover.h"
@@ -20,7 +20,7 @@
 #include "../exceptions/ImageException.h"
 
 // Set all the directions to false
-KeyboardCharacterMover::KeyboardCharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false), m_result(Collisions::NoCollision), m_flying(true), m_lastFunction(100)
+KeyboardCharacterMover::KeyboardCharacterMover() : m_south(false), m_north(false), m_east(false), m_west(false), m_result(Collisions::NoCollision), m_flying(true)
 {
 }
 
@@ -234,6 +234,10 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
                         //Check rebound in y axis
                             if(m_physic.checkRebound(character.m_velocityY))
                             {
+                                ServiceLocator::GetAudio()->playSound("impact.ogg", 60, false);
+                                character.m_damagesFilter.setAlpha(100);
+                                character.m_damagesFilter.setActive(true);
+
                                 if(m_characterVelocityY <= 700)
                                     character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
 
@@ -260,6 +264,10 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
                 //Check rebound in y axis
                     if(m_physic.checkRebound(character.m_velocityY))
                     {
+                        ServiceLocator::GetAudio()->playSound("impact.ogg", 100, false);
+                        character.m_damagesFilter.setAlpha(100);
+                        character.m_damagesFilter.setActive(true);
+
                         if(m_characterVelocityY <= 700)
                             character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
 
@@ -364,7 +372,12 @@ bool finished(false);
 
 // Change character texture to dig
     if(digDirection == KeyboardCharacterMover::SOUTH)
-        character.setCharacterTexture("digDown.png");
+    {
+        if(character.m_characterTextureName == "vehiculeLeft.png")
+            character.setCharacterTexture("digDownLeft.png");
+        else
+            character.setCharacterTexture("digDownRight.png");
+    }
 
     else if(digDirection == KeyboardCharacterMover::WEST)
         character.setCharacterTexture("digLeft.png");
@@ -437,6 +450,9 @@ while(!finished)
 
 // Change character texture back to normal
     if(digDirection == KeyboardCharacterMover::EAST)
+        character.setCharacterTexture("vehiculeRight.png");
+
+    else if(digDirection == KeyboardCharacterMover::SOUTH && character.m_characterTextureName == "digDownRight.png")
         character.setCharacterTexture("vehiculeRight.png");
 
     else

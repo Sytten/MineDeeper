@@ -17,7 +17,8 @@
 
 using namespace std;
 
-Character::Character(int lastAirBlockY) : m_characterRect(381, 700, 63, 50), m_drawOffset(0, 0), m_lastAirBlockY(lastAirBlockY), m_velocityX(0), m_velocityY(0), m_maxVelocity(300), m_digSpeed(2.5), m_digPower(0), m_protection(0)
+Character::Character(sf::Vector2f windowSize, int lastAirBlockY) : m_characterRect(381, 700, 63, 50), m_drawOffset(0, 0), m_lastAirBlockY(lastAirBlockY), m_velocityX(0), m_velocityY(0)
+    , m_maxVelocity(300), m_digSpeed(2.5), m_digPower(0), m_protection(0), m_damagesFilter(sf::Color::Red, 2.f, sf::Rect<float>(0, 0, windowSize.x, windowSize.y) , false, 0.02f)
 {
     // Load the character`s texture
         if(!m_characterTexture.loadFromFile("data/vehiculeLeft.png"))
@@ -34,6 +35,8 @@ Character::Character(int lastAirBlockY) : m_characterRect(381, 700, 63, 50), m_d
     m_altitude.setColor(sf::Color::White);
     m_altitude.setFont(m_altitudeFont);
     m_altitude.setCharacterSize(20);
+
+    m_damagesFilter.setActive(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

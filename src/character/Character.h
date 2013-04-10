@@ -24,13 +24,14 @@
 #include "ResourcesInventory.h"
 #include "Fuel.h"
 #include "Property.h"
+#include "../render/Filter.h"
 
 class TilesMap;
 
 class Character
 {
     public:
-        Character(int lastAirBlockY);
+        Character(sf::Vector2f windowSize, int lastAirBlockY);
 
         // Setters of different variables
             void setCharacterTexture(std::string textureName);
@@ -51,6 +52,7 @@ class Character
             float getProperty( Property property ) const;
             sf::Text const& getAltitude() const { return m_altitude; }
             sf::Vector2f const& getOffset() const { return m_drawOffset; }
+            Filter& getDamagesFilter() { return m_damagesFilter; }
 
     private:
         std::stringstream m_converter;
@@ -78,6 +80,9 @@ class Character
         Artifacts m_artifacts;
         Money m_money;
         ResourcesInventory m_ressourcesInventory;
+
+        // Filter when get damages
+            Filter m_damagesFilter;
 
         // KeyboardCharacterMover now have full access to the private variables
             friend class KeyboardCharacterMover;

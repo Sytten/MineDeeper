@@ -61,9 +61,5 @@ class KeyboardCharacterMover
             Physic m_physic;
             bool m_flying;
             float m_characterVelocityY; // Temp value
-
-        // Clock for the sound
-            sf::Clock m_soundClock;
-            int m_lastFunction;
 };
 #endif

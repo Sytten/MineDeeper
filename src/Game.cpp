@@ -8,7 +8,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 08/04/2013
+// Last modification date: 09/04/2013
 // ---------------------------------------------------------------------------
 
 #include "Game.h"
@@ -27,7 +27,7 @@ void Game::gameLoop()
         return;
 
 // Create the window
-    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.3", sf::Style::Close); //Create a window
+    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.3.4", sf::Style::Close); //Create a window
         m_mainWindow.setFramerateLimit(60); //Limit the framerate
 
 // Create and set the audio service
@@ -75,6 +75,9 @@ void Game::gameLoop()
 
 void Game::mainMenuLoop(sf::Event& currentEvent)
 {
+// Stop sounds just in case
+    ServiceLocator::GetAudio()->stopAllSounds();
+
 // Create the Main menu object
     m_mainMenu.reset( new MainMenu );
 
@@ -111,7 +114,7 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
 {
 // Create games objects
     m_tilesMap.reset( new TilesMap(75, 75) );
-    m_character.reset( new Character(m_tilesMap->findLastAirBlockY()) );
+    m_character.reset( new Character(m_windowSize, m_tilesMap->findLastAirBlockY()) );
     m_characterMover.reset( new KeyboardCharacterMover );
     m_collisions.reset( new Collisions );
     m_camera.reset( new Camera(m_windowSize.x, m_windowSize.y) );
@@ -203,6 +206,7 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
 
                                     // If enter is pressed, check if the player can enter in a building
                                         case sf::Keyboard::Return:
+                                        case sf::Keyboard::Space:
                                             enterBuilding();
                                                 clock.restart();
                                                 fuelClock.restart();
@@ -392,7 +396,7 @@ void Game::win()
     ServiceLocator::GetAudio()->stopSong();
 
 // Set the properties
-    m_text.setString("Win! Nice Job!\nGame by Sytten and Vantuan\nMusic by The Algorithm");
+    m_text.setString("Win! Nice Job!");
         m_text.setColor(sf::Color::Red);
         m_text.setPosition((m_windowSize.x/2) - (m_text.getLocalBounds().width/2), (m_windowSize.y/2) - (m_text.getLocalBounds().height/2));
 
