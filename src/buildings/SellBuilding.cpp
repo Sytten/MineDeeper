@@ -236,17 +236,28 @@ bool SellBuilding::enter(sfg::SFGUI &sfgui, sf::RenderWindow &window, Character 
 
 void SellBuilding::sellButtonClick()
 {
-// Add the money to the player
-    m_ptrCharacter->getMoney().addMoney(m_totalToSell);
+if(m_totalToSell != 0)
+{
+    // Play sound
+        ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
 
-// Clear the resources
-    m_ptrCharacter->getResourcesInventory().removeResources();
+    // Add the money to the player
+        m_ptrCharacter->getMoney().addMoney(m_totalToSell);
 
-// Destroy the labels
-    m_mainFrame->RemoveAll();
+    // Clear the resources
+        m_ptrCharacter->getResourcesInventory().removeResources();
 
-// Set the money Label
-    setMoneyLabel();
+    // Destroy the labels
+        m_mainFrame->RemoveAll();
+
+    // Set the money Label
+        setMoneyLabel();
+
+    //Set the total to 0
+        m_totalToSell = 0;
+}
+else
+    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

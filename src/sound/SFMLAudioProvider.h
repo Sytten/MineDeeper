@@ -50,6 +50,8 @@ class SFMLAudioProvider : public IAudioProvider
             void decreaseVolumeSounds(float decrease);
             void decreaseVolumeSong(float decrease);
 
+        void mute(bool state);
+
     private:
         struct Sound
         {

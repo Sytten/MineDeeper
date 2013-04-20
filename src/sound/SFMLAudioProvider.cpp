@@ -14,7 +14,7 @@
 
 #include "SFMLAudioProvider.h"
 
-SFMLAudioProvider::SFMLAudioProvider() : m_currentSongName(""), m_volumeSounds(80), m_volumeSong(100)
+SFMLAudioProvider::SFMLAudioProvider() : IAudioProvider(), m_currentSongName(""), m_volumeSounds(80), m_volumeSong(100)
 {
 }
 
@@ -47,7 +47,8 @@ void SFMLAudioProvider::playSong(std::string songName, bool looping)
 // Set the properties of the song
     song->setVolume(m_volumeSong);
     song->setLoop(looping);
-    song->play();
+    if(!m_mute)
+        song->play();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,8 +93,9 @@ void SFMLAudioProvider::playSound(std::string soundName, bool looping)
                 m_sounds.erase(availChannel);
                 m_iterSounds = m_sounds.insert(std::pair<int, SFMLAudioProvider::Sound>(availChannel, sound)).first;
 
-            // Start the sound
-                m_iterSounds->second.sound.play();
+            // Start the sound if not muted
+                if(!m_mute)
+                    m_iterSounds->second.sound.play();
         }
         catch(SoundNotFoundException &e)
         {
@@ -117,8 +119,9 @@ void SFMLAudioProvider::playSound(std::string soundName, bool looping)
             // Store the sound
                 m_iterSounds = m_sounds.insert(std::pair<int, SFMLAudioProvider::Sound>(m_sounds.size(), sound)).first;
 
-            // Start the sound
-                m_iterSounds->second.sound.play();
+            // Start the sound if not muted
+                if(!m_mute)
+                    m_iterSounds->second.sound.play();
         }
         catch(SoundNotFoundException &e)
         {
@@ -381,6 +384,48 @@ void SFMLAudioProvider::decreaseVolumeSong(float decrease)
             {
                 // We failed to change the song's volume, so just display it and do nothing
                     std::cerr << "An exception occurred : " << e.what() << std::endl;
+            }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void SFMLAudioProvider::mute(bool state)
+{
+    m_mute = state;
+
+    if(m_mute)
+    {
+        stopAllSounds();
+    }
+
+    else
+    {
+        // If we loaded a song
+            if(m_currentSongName != "")
+            {
+                // Create a pointer to handle the song
+                    sf::Music* song;
+
+                // Try to load the music and start it
+                    try
+                    {
+                        song = m_cache.getMusic(m_currentSongName);
+                        song->play();
+                    }
+                    catch(SoundNotFoundException &e)
+                    {
+                        // We failed to change the song's volume, so just display it and do nothing
+                            std::cerr << "An exception occurred : " << e.what() << std::endl;
+                    }
+            }
+
+        // Check each sound in the map
+            int i(0);
+            for(m_iterSounds = m_sounds.begin(), i = 0; m_iterSounds != m_sounds.end() && i < MAX_SOUND_CHANNELS; ++m_iterSounds, ++i)
+            {
+                // Start each sound
+                    m_iterSounds->second.sound.play();
             }
     }
 }

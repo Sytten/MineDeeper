@@ -9,7 +9,7 @@
 //
 // Author: Sytten
 // Creation date: 07/11/2012
-// Last modification date: 09/04/2013
+// Last modification date: 15/04/2013
 // ---------------------------------------------------------------------------
 
 #include "KeyboardCharacterMover.h"
@@ -228,62 +228,27 @@ void KeyboardCharacterMover::move(sf::RenderWindow &window, Character &character
                         dig(window, character, tilesMap, camera, background, m_blockPos, KeyboardCharacterMover::SOUTH);
                     }
 
+                    else if(m_blockPos.y > character.m_characterRect.top)
+                    {
+                        impact(character);
+                    }
                     else
                     {
-                        m_characterVelocityY = character.m_velocityY;
-                        //Check rebound in y axis
-                            if(m_physic.checkRebound(character.m_velocityY))
-                            {
-                                ServiceLocator::GetAudio()->playSound("impact.ogg", 60, false);
-                                character.m_damagesFilter.setAlpha(100);
-                                character.m_damagesFilter.setActive(true);
-
-                                if(m_characterVelocityY <= 700)
-                                    character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
-
-                                if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
-                                    character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
-
-                                if(m_characterVelocityY > 1000)
-                                    character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
-                            }
-
-                        //If there's no rebound
-                            else if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY >= 0)
-                            {
-                                m_flying = false;
-                                character.m_velocityY = 0;
-                            }
+                        character.m_velocityY = 0;
                     }
             }
 
         // If we collided but we can't dig
-            else if(m_result == Collisions::BlockCollision)
+            else if(m_result == Collisions::BlockCollision && m_blockPos.y > character.m_characterRect.top)
             {
-                m_characterVelocityY = character.m_velocityY;
-                //Check rebound in y axis
-                    if(m_physic.checkRebound(character.m_velocityY))
-                    {
-                        ServiceLocator::GetAudio()->playSound("impact.ogg", 100, false);
-                        character.m_damagesFilter.setAlpha(100);
-                        character.m_damagesFilter.setActive(true);
+                impact(character);
+            }
 
-                        if(m_characterVelocityY <= 700)
-                            character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
-
-                        if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
-                            character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
-
-                        if(m_characterVelocityY > 1000)
-                            character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
-                    }
-
-                //If there's no rebound
-                    else if(m_blockPos.y > character.m_characterRect.top && m_characterVelocityY > 0)
-                    {
-                        m_flying = false;
-                        character.m_velocityY = 0;
-                    }
+        // If we collided with the top or the end of the world (in which case we need to lose life)
+            else if(m_result == Collisions::Collision)
+            {
+                if(!impact(character))
+                    character.m_velocityY = 0;
             }
 
             else
@@ -439,11 +404,25 @@ while(!finished)
 // Add the resource in the character inventory
     int blockID = tilesMap.getTile((blockPos.x/tilesMap.getTileSize().x), (blockPos.y/tilesMap.getTileSize().y));
     if(tilesMap.getTileProp(blockID).ore)
-        character.getResourcesInventory().addResource(blockID, tilesMap.getTileProp(blockID).name, tilesMap.getTileProp(blockID).price);
+    {
+        if(character.getResourcesInventory().addResource(blockID, tilesMap.getTileProp(blockID).name, tilesMap.getTileProp(blockID).price))
+            character.m_floatingTexts.push_back(std::shared_ptr<FloatingText>( new FloatingText("+1 " + tilesMap.getTileProp(blockID).name, "data/ariblk.ttf", 16,
+                                                                                                sf::Color::Green, sf::Vector2f(0,-10), character.m_characterRect,
+                                                                                                FloatingText::Orientation::X, sf::Vector2f(0,-80), true, sf::Time(sf::seconds(1.5f))) ));
+        else
+            character.m_floatingTexts.push_back(std::shared_ptr<FloatingText>( new FloatingText("Cargo full", "data/ariblk.ttf", 16, sf::Color::Red, sf::Vector2f(0,-10),
+                                                                                                character.m_characterRect, FloatingText::Orientation::X, sf::Vector2f(0,-80),
+                                                                                                true, sf::Time(sf::seconds(1.5f))) ));
+    }
 
 // If it's an artifact, add it to the player inventory
     if(tilesMap.getTileProp(blockID).artifact)
+    {
         character.getArtifacts().foundArtifact();
+        character.m_floatingTexts.push_back(std::shared_ptr<FloatingText>( new FloatingText("+1 Artifact", "data/ariblk.ttf", 16, sf::Color(255, 191, 0), sf::Vector2f(0,-10),
+                                                                                            character.m_characterRect, FloatingText::Orientation::X, sf::Vector2f(0,-80),
+                                                                                            true, sf::Time(sf::seconds(1.5f))) ));
+    }
 
 // Change the block who has been dig to air
     tilesMap.setTile((blockPos.x/tilesMap.getTileSize().x), (blockPos.y/tilesMap.getTileSize().y), 2);
@@ -459,11 +438,49 @@ while(!finished)
         character.setCharacterTexture("vehiculeLeft.png");
 
 // Change the sounds
-    ServiceLocator::GetAudio()->stopSounds();
-    ServiceLocator::GetAudio()->playSound("normal.ogg", 60, true);
+    ServiceLocator::GetAudio()->stopSound("drill.ogg");
+    if(!ServiceLocator::GetAudio()->isSoundPlaying("normal.ogg"))
+        ServiceLocator::GetAudio()->playSound("normal.ogg", 60, true);
 
 // Remove all the directions, so the player won't move
     character.m_velocityY = 0;
     character.m_velocityX = 0;
     removeAllDirections();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool KeyboardCharacterMover::impact(Character &character)
+{
+// Store character velocity
+    m_characterVelocityY = character.m_velocityY;
+
+//Check rebound in y axis
+    if(m_physic.checkRebound(character.m_velocityY))
+    {
+        ServiceLocator::GetAudio()->playSound("impact.ogg", 100, false);
+        character.m_damagesFilter.setAlpha(100);
+        character.m_damagesFilter.setActive(true);
+
+        if(m_characterVelocityY <= 700)
+            character.getLife().removeLife(m_characterVelocityY * 1/30 * (100 - character.getProperty(Property::Protection)) / 100);
+
+        if(m_characterVelocityY > 700 && m_characterVelocityY <= 1000)
+            character.getLife().removeLife(m_characterVelocityY * 1/20 * (100 - character.getProperty(Property::Protection)) / 100);
+
+        if(m_characterVelocityY > 1000)
+            character.getLife().removeLife(m_characterVelocityY * 1/12 * (100 - character.getProperty(Property::Protection)) / 100);
+
+        return true;
+    }
+
+//If there's no rebound
+    else if(m_characterVelocityY > 0)
+    {
+        m_flying = false;
+        character.m_velocityY = 0;
+        return false;
+    }
+
+    return false;
 }

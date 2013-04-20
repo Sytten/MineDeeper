@@ -56,27 +56,39 @@ void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos
 {
     // Set the position on the screen
         character.verifyOffset();
-        character.setCharacterPosition(character.getCharacterRect().left - cameraPos.x + character.getOffset().x, character.getCharacterRect().top - cameraPos.y + character.getOffset().y);
+        character.setCharacterPosition(character.m_characterRect.left - cameraPos.x + character.m_drawOffset.x, character.getCharacterRect().top - cameraPos.y + character.m_drawOffset.y);
 
     // Run the filter to make changes and draw it if active
-        if(character.getDamagesFilter().isActive())
+        if(character.m_damagesFilter.isActive())
         {
-            character.getDamagesFilter().runFilter();
-            window.draw(character.getDamagesFilter().getFilter());
+            character.m_damagesFilter.runFilter();
+            window.draw(character.m_damagesFilter.getFilter());
         }
 
     // Draw the life and the fuel bars
-        window.draw(character.getLife().getFullLifeBarSprite());
-        window.draw(character.getLife().getShapeLifeBarSprite());
-        window.draw(character.getFuel().getFullFuelBarSprite());
-        window.draw(character.getFuel().getShapeFuelBarSprite());
+        window.draw(character.m_life.getFullLifeBarSprite());
+        window.draw(character.m_life.getShapeLifeBarSprite());
+        window.draw(character.m_fuel.getFullFuelBarSprite());
+        window.draw(character.m_fuel.getShapeFuelBarSprite());
+
+    // Update the texts, delete them if necessary or draw them
+        for(character.m_i = 0; character.m_i < character.m_floatingTexts.size(); ++(character.m_i))
+        {
+            if(character.m_floatingTexts.at(character.m_i)->isFinished())
+                character.m_floatingTexts.erase(character.m_floatingTexts.begin() + character.m_i);
+            else
+            {
+                character.m_floatingTexts.at(character.m_i)->update();
+                window.draw(character.m_floatingTexts.at(character.m_i)->getText(cameraPos));
+            }
+        }
 
     // Draw the altitude
         character.verifyAltitude(tileSize);
-        window.draw(character.getAltitude());
+        window.draw(character.m_altitude);
 
     // Draw the character
-        window.draw(character.getCharacterSprite());
+        window.draw(character.m_characterSprite);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

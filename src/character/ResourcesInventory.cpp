@@ -8,7 +8,7 @@
 //
 // Author: Sytten
 // Creation date: 28/01/2013
-// Last modification date: 01/02/2013
+// Last modification date: 15/04/2013
 // ---------------------------------------------------------------------------
 
 #include "ResourcesInventory.h"
@@ -26,7 +26,7 @@ void ResourcesInventory::removeResources()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void ResourcesInventory::addResource(int blockID, std::string name, int price)
+bool ResourcesInventory::addResource(int blockID, std::string name, int price)
 {
     if(!full())
     {
@@ -47,6 +47,14 @@ void ResourcesInventory::addResource(int blockID, std::string name, int price)
 
             m_resourcesList[blockID] = ressource;
         }
+
+        return true;
+    }
+
+    else
+    {
+        ServiceLocator::GetAudio()->playSound("error1.ogg", 100, false);
+        return false;
     }
 }
 

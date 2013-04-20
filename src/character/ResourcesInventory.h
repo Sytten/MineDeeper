@@ -19,6 +19,7 @@
 #include <string>
 
 #include "../buildings/SellBuilding.h"
+#include "../ServiceLocator.h"
 
 class Character;
 
@@ -27,7 +28,7 @@ class ResourcesInventory
     public:
         ResourcesInventory();
         void removeResources();
-        void addResource(int blockID, std::string name, int price);
+        bool addResource(int blockID, std::string name, int price);
 
         struct Resource
         {

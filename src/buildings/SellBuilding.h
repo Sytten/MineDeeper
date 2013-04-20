@@ -22,6 +22,7 @@
 #include <SFGUI/SFGUI.hpp>
 
 #include "Building.h"
+#include "../ServiceLocator.h"
 
 class Character;
 

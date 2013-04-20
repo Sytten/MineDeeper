@@ -35,6 +35,7 @@
 #include "mechanics/Collisions.h"
 #include "sound/SFMLAudioProvider.h"
 #include "ServiceLocator.h"
+#include "exceptions/ImageException.h"
 
 class Game
 {

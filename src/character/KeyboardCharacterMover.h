@@ -20,6 +20,7 @@
 #include "../mechanics/Collisions.h"
 #include "../mechanics/Physic.h"
 #include "../ServiceLocator.h"
+#include "../render/FloatingText.h"
 
 class Character;
 class TilesMap;
@@ -45,6 +46,7 @@ class KeyboardCharacterMover
     private:
         // Function to dig
             void dig(sf::RenderWindow &window, Character &character, TilesMap &tilesMap, Camera &camera, Background &background, sf::Vector2i blockPos, Direction digDirection);
+            bool impact(Character &character);
 
         // The directions
             bool m_south;

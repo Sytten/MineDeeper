@@ -15,6 +15,8 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
 #include "KeyboardCharacterMover.h"
@@ -25,6 +27,7 @@
 #include "Fuel.h"
 #include "Property.h"
 #include "../render/Filter.h"
+#include "../render/FloatingText.h"
 
 class TilesMap;
 
@@ -46,13 +49,9 @@ class Character
             Life& getLife() { return m_life; }
             Fuel& getFuel() { return m_fuel; }
             ResourcesInventory& getResourcesInventory() { return m_ressourcesInventory; }
-            sf::Sprite const& getCharacterSprite() const { return m_characterSprite; }
             sf::Rect<float> const& getCharacterRect() const { return m_characterRect; }
             float getvelocity() const { return m_velocityY; }
             float getProperty( Property property ) const;
-            sf::Text const& getAltitude() const { return m_altitude; }
-            sf::Vector2f const& getOffset() const { return m_drawOffset; }
-            Filter& getDamagesFilter() { return m_damagesFilter; }
 
     private:
         std::stringstream m_converter;
@@ -66,6 +65,8 @@ class Character
             std::string m_altitudeString;
             sf::Font m_altitudeFont;
             int m_lastAirBlockY;
+        std::vector<std::shared_ptr<FloatingText>> m_floatingTexts;
+        int m_i;
 
         float m_velocityX;
         float m_velocityY;
@@ -86,6 +87,9 @@ class Character
 
         // KeyboardCharacterMover now have full access to the private variables
             friend class KeyboardCharacterMover;
+
+        // Draw have full access to the private variables
+            friend void draw(sf::RenderWindow &window, Character &character, sf::Vector2f cameraPos, sf::Vector2i tileSize);
 };
 
 #endif

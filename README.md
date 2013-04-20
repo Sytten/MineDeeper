@@ -1,14 +1,5 @@
-!Important message!
--------------------
-For the people who already have download the game:
-The version of SFGUI has been updated so you need to redownload the package with the depencies in order to run the game properly.
-Also, I added sounds in the game so you need to redownload the package with the depencies in order to run the game properly.
-Thank you!
-
-
 MineDeeper
 ==========
-
 In MineDeeper, you control a driller-robot who is on an unknown planet, trying to find some alien artifacts.
 You have to dig to collect resources that you can sell to gain money. With that money, you can buy fuel, upgrades
 or you can repair your robot. If you run out of fuel or life, your robot explodes and you have to restart a new game.
@@ -21,11 +12,10 @@ Vantuan - Main Graphist
 
 Download
 --------
-You can get the lastest build version (for windows only for now) in the corresponding section.
-If you download the game for the first time, you will have to download the zip file with dependencies, but next
-time you can download zip file without the depencies except if I make a big update (I'll be written).
+You can get the lastest build version (for windows only for now) here: http://tinyurl.com/cffdpm9
 You can also build build your own version if you want, you just have to download the source
-(don`t forget to link SFML and SFGUI).
+(don`t forget to link SFML and SFGUI). The only problem if it's not in windows his the ressource file
+for the icon. I'll try to do a more portable way in the futur.
 
 Contribute
 --------

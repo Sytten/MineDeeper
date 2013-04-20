@@ -202,49 +202,63 @@ void FuelBuilding::moneyButtonClick(int liters)
     if(liters > m_ptrCharacter->getFuel().fuelNeededToBeFull())
         liters = m_ptrCharacter->getFuel().fuelNeededToBeFull(); // If we can't, put the max
 
-// Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( unsigned(liters * m_fuelPrice) ) && unsigned(liters * m_fuelPrice) != 0)
-    {
-        // If yes, remove the money and add the fuel
-            m_ptrCharacter->getMoney().removeMoney( unsigned(liters * m_fuelPrice) );
-            m_ptrCharacter->getFuel().addFuel(liters);
-    }
+if(liters != 0)
+{
 
-    else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(liters * m_fuelPrice) == 0)
-    {
-        // Remove the money and add the fuel
-            m_ptrCharacter->getMoney().removeMoney(1);
-            m_ptrCharacter->getFuel().addFuel(liters);
-    }
+    // Check if the player have enough money
+        if(m_ptrCharacter->getMoney().enoughMoney( unsigned(liters * m_fuelPrice) ) && unsigned(liters * m_fuelPrice) != 0)
+        {
+            // If yes, remove the money and add the fuel
+                m_ptrCharacter->getMoney().removeMoney( unsigned(liters * m_fuelPrice) );
+                m_ptrCharacter->getFuel().addFuel(liters);
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+        }
 
-    else
-    {
-        // Reduce by one the number of liter and check if the player can afford it
-            for(int i(liters); i > 0; i--)
-            {
-                if(m_ptrCharacter->getMoney().enoughMoney( unsigned(i * m_fuelPrice) ) && unsigned(i * m_fuelPrice) != 0)
+        else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(liters * m_fuelPrice) == 0)
+        {
+            // Remove the money and add the fuel
+                m_ptrCharacter->getMoney().removeMoney(1);
+                m_ptrCharacter->getFuel().addFuel(liters);
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+        }
+
+        else
+        {
+            // Reduce by one the number of liter and check if the player can afford it
+                int i(0);
+                for( i = liters; i > 0; i--)
                 {
-                    // Remove the money and add the fuel
-                        m_ptrCharacter->getMoney().removeMoney( unsigned(i * m_fuelPrice) );
-                        m_ptrCharacter->getFuel().addFuel(i);
-                    break;
+                    if(m_ptrCharacter->getMoney().enoughMoney( unsigned(i * m_fuelPrice) ) && unsigned(i * m_fuelPrice) != 0)
+                    {
+                        // Remove the money and add the fuel
+                            m_ptrCharacter->getMoney().removeMoney( unsigned(i * m_fuelPrice) );
+                            m_ptrCharacter->getFuel().addFuel(i);
+                            ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+                        break;
+                    }
+
+                    else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(i * m_fuelPrice) == 0)
+                    {
+                        // Remove the money and add the fuel
+                            m_ptrCharacter->getMoney().removeMoney(1);
+                            m_ptrCharacter->getFuel().addFuel(i);
+                            ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+                        break;
+                    }
                 }
+                if(i == 0)
+                    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
+        }
 
-                if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(i * m_fuelPrice) == 0)
-                {
-                    // Remove the money and add the fuel
-                        m_ptrCharacter->getMoney().removeMoney(1);
-                        m_ptrCharacter->getFuel().addFuel(i);
-                    break;
-                }
-            }
-    }
+    // Set the fraction of the tank who's full
+        m_tank->SetFraction( m_ptrCharacter->getFuel().fractionOfFuelFull() );
 
-// Set the fraction of the tank who's full
-    m_tank->SetFraction( m_ptrCharacter->getFuel().fractionOfFuelFull() );
+    // Set the money Label
+        setMoneyLabel();
+}
+else
+    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
 
-// Set the money Label
-    setMoneyLabel();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,49 +268,62 @@ void FuelBuilding::fullButtonClick()
 // Get the number of liters we need to add to be full
     int liters = m_ptrCharacter->getFuel().fuelNeededToBeFull();
 
-// Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( unsigned(liters * m_fuelPrice) ))
-    {
-        // If yes, remove the money and add the fuel
-            m_ptrCharacter->getMoney().removeMoney( unsigned(liters * m_fuelPrice) );
-            m_ptrCharacter->getFuel().addFuel(liters);
-    }
+if(liters != 0)
+{
+    // Check if the player have enough money
+        if(m_ptrCharacter->getMoney().enoughMoney( unsigned(liters * m_fuelPrice) ) && unsigned(liters * m_fuelPrice) != 0)
+        {
+            // If yes, remove the money and add the fuel
+                m_ptrCharacter->getMoney().removeMoney( unsigned(liters * m_fuelPrice) );
+                m_ptrCharacter->getFuel().addFuel(liters);
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+        }
 
-    else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(liters * m_fuelPrice) == 0)
-    {
-        // Remove the money and add the fuel
-            m_ptrCharacter->getMoney().removeMoney(1);
-            m_ptrCharacter->getFuel().addFuel(liters);
-    }
+        else if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(liters * m_fuelPrice) == 0)
+        {
+            // Remove the money and add the fuel
+                m_ptrCharacter->getMoney().removeMoney(1);
+                m_ptrCharacter->getFuel().addFuel(liters);
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+        }
 
-    else
-    {
-        // Reduce by one the number of liter and check if the player can afford it
-            for(int i(liters); i > 0; i--)
-            {
-                if(m_ptrCharacter->getMoney().enoughMoney( unsigned(i * m_fuelPrice) ) && unsigned(i * m_fuelPrice) != 0)
+        else
+        {
+            // Reduce by one the number of liter and check if the player can afford it
+                int i(0);
+                for(i = liters; i > 0; i--)
                 {
-                    // Remove the money and add the fuel
-                        m_ptrCharacter->getMoney().removeMoney( unsigned(i * m_fuelPrice) );
-                        m_ptrCharacter->getFuel().addFuel(i);
-                    break;
+                    if(m_ptrCharacter->getMoney().enoughMoney( unsigned(i * m_fuelPrice) ) && unsigned(i * m_fuelPrice) != 0)
+                    {
+                        // Remove the money and add the fuel
+                            m_ptrCharacter->getMoney().removeMoney( unsigned(i * m_fuelPrice) );
+                            m_ptrCharacter->getFuel().addFuel(i);
+                            ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+                        break;
+                    }
+
+                    if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(i * m_fuelPrice) == 0)
+                    {
+                        // Remove the money and add the fuel
+                            m_ptrCharacter->getMoney().removeMoney(1);
+                            m_ptrCharacter->getFuel().addFuel(i);
+                            ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+                        break;
+                    }
                 }
+                if(i == 0)
+                    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
+        }
 
-                if(m_ptrCharacter->getMoney().enoughMoney(1) && unsigned(i * m_fuelPrice) == 0)
-                {
-                    // Remove the money and add the fuel
-                        m_ptrCharacter->getMoney().removeMoney(1);
-                        m_ptrCharacter->getFuel().addFuel(i);
-                    break;
-                }
-            }
-    }
+    // Set the fraction of the tank who's full
+        m_tank->SetFraction( m_ptrCharacter->getFuel().fractionOfFuelFull() );
 
-// Set the fraction of the tank who's full
-    m_tank->SetFraction( m_ptrCharacter->getFuel().fractionOfFuelFull() );
+    // Set the money Label
+        setMoneyLabel();
+}
+else
+    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
 
-// Set the money Label
-    setMoneyLabel();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

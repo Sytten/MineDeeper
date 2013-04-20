@@ -19,6 +19,7 @@
 class IAudioProvider
 {
     public:
+        IAudioProvider() : m_mute(false) {}
         virtual ~IAudioProvider() {}
 
         virtual void playSound(std::string filename, bool looping) = 0;
@@ -42,6 +43,12 @@ class IAudioProvider
         virtual void decreaseVolume(float decrease) = 0;
             virtual void decreaseVolumeSounds(float decrease) = 0;
             virtual void decreaseVolumeSong(float decrease) = 0;
+
+        virtual void mute(bool state) = 0;
+        bool isMuted() { return m_mute; }
+
+    protected:
+        bool m_mute;
 };
 
 #endif // IAUDIOPROVIDER_H

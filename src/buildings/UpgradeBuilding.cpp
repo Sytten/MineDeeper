@@ -318,38 +318,47 @@ void UpgradeBuilding::moneyButtonClick( int life )
     if(life > m_ptrCharacter->getLife().lifeNeededToBeFull())
         life = m_ptrCharacter->getLife().lifeNeededToBeFull(); // If we can't, put the max
 
-// Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(life * m_lifePrice) ))
-    {
-        // If yes, remove the money and add the life
-            m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
-            m_ptrCharacter->getLife().addLife( life );
-    }
-
-    else
-    {
-        // Reduce by one the number of liter and check if the player can afford it
-            for(int i(life); i > 0; i--)
-            {
-                if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(i * m_lifePrice) ))
-                {
-                    life = i;
-                    break;
-                }
-            }
-        // If we found a number greater than 0, remove the money and add the life
-            if(life > 0)
-            {
+if(life != 0)
+{
+    // Check if the player have enough money
+        if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(life * m_lifePrice) ))
+        {
+            // If yes, remove the money and add the life
                 m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
                 m_ptrCharacter->getLife().addLife( life );
-            }
-    }
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+        }
 
-// Set the fraction of the life bar who's full
-    m_lifeBar->SetFraction( m_ptrCharacter->getLife().fractionOfLifeFull() );
+        else
+        {
+            // Reduce by one the number of liter and check if the player can afford it
+                for(int i(life); i > 0; i--)
+                {
+                    if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(i * m_lifePrice) ))
+                    {
+                        life = i;
+                        break;
+                    }
+                }
+            // If we found a number greater than 0, remove the money and add the life
+                if(life > 0)
+                {
+                    m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
+                    m_ptrCharacter->getLife().addLife( life );
+                    ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+                }
+                else
+                    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
+        }
 
-// Set the money Label
-    setMoneyLabel();
+    // Set the fraction of the life bar who's full
+        m_lifeBar->SetFraction( m_ptrCharacter->getLife().fractionOfLifeFull() );
+
+    // Set the money Label
+        setMoneyLabel();
+}
+else
+    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,38 +368,47 @@ void UpgradeBuilding::fullButtonClick()
 // Get the life we need to add to be full
     int life = m_ptrCharacter->getLife().lifeNeededToBeFull();
 
-// Check if the player have enough money
-    if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(life * m_lifePrice) ))
-    {
-        // If yes, remove the money and add the life
-            m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
-            m_ptrCharacter->getLife().addLife( life );
-    }
-
-    else
-    {
-        // Reduce by one the number of liter and check if the player can afford it
-            for(int i(life); i > 0; i--)
-            {
-                if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(i * m_lifePrice) ))
-                {
-                    life = i;
-                    break;
-                }
-            }
-        // If we found a number greater than 0, remove the money and add the life
-            if(life > 0)
-            {
+if(life != 0)
+{
+    // Check if the player have enough money
+        if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(life * m_lifePrice) ))
+        {
+            // If yes, remove the money and add the life
                 m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
                 m_ptrCharacter->getLife().addLife( life );
-            }
-    }
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+        }
 
-// Set the fraction of the life bar who's full
-    m_lifeBar->SetFraction( m_ptrCharacter->getLife().fractionOfLifeFull() );
+        else
+        {
+            // Reduce by one the number of liter and check if the player can afford it
+                for(int i(life); i > 0; i--)
+                {
+                    if(m_ptrCharacter->getMoney().enoughMoney( (unsigned)(i * m_lifePrice) ))
+                    {
+                        life = i;
+                        break;
+                    }
+                }
+            // If we found a number greater than 0, remove the money and add the life
+                if(life > 0)
+                {
+                    m_ptrCharacter->getMoney().removeMoney( (unsigned)(life * m_lifePrice) );
+                    m_ptrCharacter->getLife().addLife( life );
+                    ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
+                }
+                else
+                    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
+        }
 
-// Set the money Label
-    setMoneyLabel();
+    // Set the fraction of the life bar who's full
+        m_lifeBar->SetFraction( m_ptrCharacter->getLife().fractionOfLifeFull() );
+
+    // Set the money Label
+        setMoneyLabel();
+}
+else
+    ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -420,7 +438,10 @@ void UpgradeBuilding::upgradeButtonClick()
             {
                 m_ptrCharacter->getMoney().removeMoney(iter->second.price);
                 m_ptrCharacter->setProperty(iter->second.upgradeType, iter->second.level);
+                ServiceLocator::GetAudio()->playSound("buy.ogg", 100, false);
             }
+            else
+                ServiceLocator::GetAudio()->playSound("error2.ogg", 100, false);
         }
     }
 

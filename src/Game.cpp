@@ -27,8 +27,15 @@ void Game::gameLoop()
         return;
 
 // Create the window
-    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.3.4", sf::Style::Close); //Create a window
+    m_mainWindow.create(sf::VideoMode((m_windowSize.x), (m_windowSize.y)), "MineDeeper Alpha V1.1.3.9", sf::Style::Close); //Create a window
         m_mainWindow.setFramerateLimit(60); //Limit the framerate
+
+// Load and set the icon
+    sf::Image icon;
+    if(!icon.loadFromFile("data/icon.png"))
+        throw ImageException("mainemenu.png"); // If it fails, throw an error
+
+    m_mainWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
 // Create and set the audio service
     SFMLAudioProvider audioProvider;
@@ -197,11 +204,14 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
 
                                     // If P is pressed, paused the game
                                         case sf::Keyboard::P:
-                                            m_gameState = Game::Paused;
-                                                pausedLoop(currentEvent);
-                                                clock.restart();
-                                                fuelClock.restart();
-                                            m_characterMover->checkStateOfKeys();
+                                            if(m_gameState == Game::Playing)
+                                            {
+                                                m_gameState = Game::Paused;
+                                                    pausedLoop(currentEvent);
+                                                    clock.restart();
+                                                    fuelClock.restart();
+                                                m_characterMover->checkStateOfKeys();
+                                            }
                                             break;
 
                                     // If enter is pressed, check if the player can enter in a building
@@ -211,6 +221,14 @@ void Game::playLoop(sf::Event& currentEvent, sf::Clock& clock)
                                                 clock.restart();
                                                 fuelClock.restart();
                                             m_characterMover->checkStateOfKeys();
+                                            break;
+
+                                    // If m is pressed, mute/demute all the sounds and the song
+                                        case sf::Keyboard::M:
+                                            if(ServiceLocator::GetAudio()->isMuted())
+                                                ServiceLocator::GetAudio()->mute(false);
+                                            else
+                                                ServiceLocator::GetAudio()->mute(true);
                                             break;
 
                                     // Else, do nothing

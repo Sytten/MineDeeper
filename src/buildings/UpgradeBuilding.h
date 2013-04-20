@@ -26,6 +26,7 @@
 #include "Building.h"
 #include "../exceptions/ImageException.h"
 #include "../character/Property.h"
+#include "../ServiceLocator.h"
 
 class Character;
 

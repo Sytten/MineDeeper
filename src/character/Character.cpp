@@ -9,7 +9,7 @@
 //
 // Author: Sytten
 // Creation date: 05/11/2012
-// Last modification date: 23/03/2013
+// Last modification date: 15/04/2013
 // ---------------------------------------------------------------------------
 
 #include "Character.h"
